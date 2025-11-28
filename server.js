@@ -47,20 +47,29 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// --- 3. DATABASE CONNECTION ---
-const db = mysql.createConnection({
+// --- 3. DATABASE CONNECTION (UPDATED FOR CLOUD & LOCAL) ---
+const dbConfig = {
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || "root",
     password: process.env.DB_PASS || "root",
     database: process.env.DB_NAME || "college_management",
-});
+    port: process.env.DB_PORT || 3306
+};
+
+// Agar Cloud par hai (Render par DB_HOST hota hai), to SSL add karo
+if (process.env.DB_HOST) {
+    dbConfig.ssl = {
+        rejectUnauthorized: false
+    };
+}
+
+const db = mysql.createConnection(dbConfig);
 
 db.connect((err) => {
     if (err) {
         console.error("❌ Database connection failed:", err.message);
-        console.log("👉 Tip: Check if XAMPP MySQL is running and database 'college_management' exists.");
     } else {
-        console.log("✅ Connected to MySQL database successfully.");
+        console.log("✅ Connected to MySQL database successfully");
     }
 });
 
