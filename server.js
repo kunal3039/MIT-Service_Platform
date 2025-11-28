@@ -30,18 +30,20 @@ if (!fs.existsSync(uploadDir)){
 // Serve Static Files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Session Setup (Updated for Render HTTPS)
+// ==================================================
+// 🔥 FINAL FIX: SESSION CONFIGURATION 🔥
+// ==================================================
 app.use(session({
     secret: 'campuscare_secret_key_secure_123',
-    resave: false,
-    saveUninitialized: false,
+    resave: true,               // Force save session
+    saveUninitialized: true,    // Save new sessions
     cookie: { 
-        secure: true,       // Render requires this for HTTPS
-        sameSite: 'none',   // Helps with cross-site cookies
-        httpOnly: true,
+        secure: false,          // ⚠️ FALSE: Taaki browser cookie reject na kare
         maxAge: 24 * 60 * 60 * 1000 // 24 Hours
     }
 }));
+// ==================================================
+
 
 // --- 2. MULTER CONFIGURATION (IMAGE UPLOAD) ---
 const storage = multer.diskStorage({
@@ -54,7 +56,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// --- 3. DATABASE CONNECTION (Updated for Cloud SSL) ---
+// --- 3. DATABASE CONNECTION (Auto SSL) ---
 const dbConfig = {
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || "root",
