@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Requests - Admin Verification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+        :root { --main-bg: #f7f9fc; --sidebar-color: #1e3a8a; }
+        
+        body { background: var(--main-bg); min-height: 100vh; overflow-x: hidden; }
+        
+        /* Sidebar Styles */
+        .sidebar { position: fixed; left: 0; top: 0; height: 100%; width: 260px; background: var(--sidebar-color); padding: 10px 14px; transition: all 0.4s ease; z-index: 100; }
+        .sidebar.close { width: 78px; }
+        .sidebar .logo-details { display: flex; align-items: center; height: 60px; position: relative; }
+        .sidebar .logo-details .logo-img { height: 40px; width: auto; }
+        .sidebar .logo-details #btn { position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 22px; cursor: pointer; color: #fff; text-align: center; width: 50px; }
+        .sidebar.close .logo-details #btn { right: 50%; transform: translate(50%, -50%); }
+        .sidebar .nav-links { margin-top: 20px; height: calc(100% - 160px); overflow-y: auto; }
+        .sidebar .nav-links::-webkit-scrollbar { display: none; }
+        .sidebar .nav-links li a { display: flex; align-items: center; text-decoration: none; color: #E0E0E0; border-radius: 12px; padding: 12px; transition: all 0.3s ease; margin-bottom: 5px; }
+        .sidebar .nav-links li a:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .sidebar .nav-links li a.active { background: #fff; color: #11101D; font-weight: 500; }
+        .sidebar .nav-links li i { min-width: 50px; text-align: center; font-size: 18px; }
+        .sidebar .profile-details { position: absolute; bottom: 0; left: 0; width: 100%; background: #162e75; padding: 12px; display: flex; align-items: center; transition: all 0.4s ease; }
+        .sidebar.close .profile-details { background: none; justify-content: center; }
+        .sidebar.close .profile-details img { margin: 0; }
+        .sidebar.close .profile-details .name-job, .sidebar.close .profile-details a { display: none; }
+        
+        /* Main Content */
+        .home-section { position: relative; background: var(--main-bg); min-height: 100vh; left: 260px; width: calc(100% - 260px); transition: all 0.4s ease; }
+        .sidebar.close ~ .home-section { left: 78px; width: calc(100% - 78px); }
+        
+        /* Animations */
+        .modal-animate { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+       <div class="logo-details"> 
+            <img src="images/mit.png" alt="Logo" class="logo-img"> 
+            <i class="fa-solid fa-bars" id="btn"></i>  
+       </div>
+       <ul class="nav-links">
+           <li><a href="admin.html"><i class="fa-solid fa-house"></i><span class="link_name">Dashboard</span></a></li>
+           <li><a href="admin_Manage_Requests.html" class="active"><i class="fa-solid fa-list-check"></i><span class="link_name">Manage Requests</span></a></li>
+           <li><a href="admin_Profile.html"><i class="fa-solid fa-user-cog"></i><span class="link_name">Admin Profile</span></a></li>
+       </ul>
+       <div class="profile-details">
+           <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="h-10 w-10 rounded-lg mr-2" alt="profile">
+           <div class="name-job">
+               <div class="profile_name">Administrator</div>
+               <div class="job">System Admin</div>
+           </div>
+           <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket" id="log_out"></i></a>
+       </div>
+    </div>
+
+    <section class="home-section">
+      <div class="flex-1 flex flex-col overflow-hidden h-screen">
+          
+          <header class="bg-white shadow-sm flex-shrink-0 z-10">
+              <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                  <h1 class="text-2xl font-bold text-gray-800" style="font-family: 'Inter', sans-serif;">Manage Requests</h1>
+                  <div class="text-sm text-gray-500">Verify Staff Work & Approve</div>
+              </div>
+          </header>
+
+          <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[--main-bg] p-6">
+              <div class="container mx-auto">
+                  <div class="bg-white rounded-2xl shadow-lg p-6">
+                      <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">All Service Requests</h2>
+                        <button onclick="fetchAllRequests()" class="text-blue-600 hover:text-blue-800 text-sm"><i class="fas fa-sync-alt mr-1"></i> Refresh</button>
+                      </div>
+                      
+                      <div class="overflow-x-auto">
+                          <table class="w-full text-left border-collapse">
+                              <thead class="bg-gray-50 border-b-2 border-gray-100">
+                                  <tr>
+                                      <th class="p-4 font-semibold text-gray-500 text-sm uppercase">ID</th>
+                                      <th class="p-4 font-semibold text-gray-500 text-sm uppercase">Student</th>
+                                      <th class="p-4 font-semibold text-gray-500 text-sm uppercase">Service</th>
+                                      <th class="p-4 font-semibold text-gray-500 text-sm uppercase">Assigned To</th>
+                                      <th class="p-4 font-semibold text-gray-500 text-sm uppercase">Date</th>
+                                      <th class="p-4 font-semibold text-gray-500 text-sm uppercase">Status</th>
+                                      <th class="p-4 font-semibold text-gray-500 text-sm uppercase text-center">Actions</th>
+                                  </tr>
+                              </thead>
+                              <tbody id="requests-table-body" class="divide-y divide-gray-100">
+                                  <tr><td colspan="7" class="p-8 text-center text-gray-500">Loading requests...</td></tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </main>
+      </div>
+    </section>
+
+    <div id="assign-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-96 shadow-2xl modal-animate p-6">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Assign Task</h3>
+            <p class="text-sm text-gray-500 mb-4">Select a staff member.</p>
+            <select id="staff-select" class="w-full p-3 border rounded-lg mb-6 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Loading staff...</option>
+            </select>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal('assign-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium">Cancel</button>
+                <button onclick="submitAssignment()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium shadow-lg transition">Assign Task</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="details-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden modal-animate flex flex-col max-h-[90vh]">
+            
+            <div class="bg-[#1e3a8a] px-6 py-4 flex justify-between items-center flex-shrink-0">
+                <h3 class="text-white text-lg font-bold flex items-center gap-2">
+                    <i class="fas fa-tasks"></i> Verification #<span id="modal-id"></span>
+                </h3>
+                <button onclick="closeModal('details-modal')" class="text-white hover:text-red-300 text-2xl transition">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+    
+            <div class="p-6 overflow-y-auto">
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 border-b pb-6">
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase font-bold tracking-wide">Student</label>
+                        <p id="modal-name" class="font-semibold text-gray-800 text-lg">Loading...</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase font-bold tracking-wide">Location</label>
+                        <p id="modal-location" class="font-semibold text-gray-800 text-lg">Loading...</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase font-bold tracking-wide">Status</label>
+                        <div id="modal-status" class="mt-1"></div>
+                    </div>
+                    <div class="col-span-3">
+                        <label class="text-xs text-gray-500 uppercase font-bold tracking-wide">Description</label>
+                        <p id="modal-desc" class="text-gray-700 bg-gray-50 p-3 rounded-lg border mt-1 text-sm">...</p>
+                    </div>
+                </div>
+    
+                <h4 class="text-center font-bold text-gray-700 mb-4 flex items-center justify-center gap-2">
+                    <i class="fas fa-camera text-blue-500"></i> PROOF OF WORK
+                </h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-80">
+                    
+                    <div class="flex flex-col h-full">
+                        <span class="text-xs font-bold text-red-500 uppercase mb-2 text-center bg-red-50 py-1 rounded-full border border-red-100">
+                            Before (Issue)
+                        </span>
+                        <div class="flex-1 bg-gray-100 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative group">
+                            <img id="img-before" src="" class="w-full h-full object-contain hidden transition-transform duration-300 group-hover:scale-105">
+                            <span id="no-img-before" class="text-gray-400 text-sm font-medium">No Image</span>
+                            <a id="link-before" href="#" target="_blank" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 transition hidden">
+                                <span class="text-white font-bold bg-black bg-opacity-60 px-4 py-2 rounded-full">View</span>
+                            </a>
+                        </div>
+                    </div>
+    
+                    <div class="flex flex-col h-full">
+                        <span class="text-xs font-bold text-green-600 uppercase mb-2 text-center bg-green-50 py-1 rounded-full border border-green-100">
+                            After (Fixed by Staff)
+                        </span>
+                        <div class="flex-1 bg-gray-100 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative group">
+                            <img id="img-after" src="" class="w-full h-full object-contain hidden transition-transform duration-300 group-hover:scale-105">
+                            
+                            <div id="pending-msg-after" class="text-center p-4">
+                                <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-2 text-blue-500 animate-pulse">
+                                    <i class="fas fa-clock text-xl"></i>
+                                </div>
+                                <p class="text-gray-700 font-bold text-sm">Waiting for Staff</p>
+                                <p class="text-gray-400 text-xs mt-1">Proof will appear here once staff<br>submits the work.</p>
+                            </div>
+    
+                            <a id="link-after" href="#" target="_blank" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 transition hidden">
+                                <span class="text-white font-bold bg-black bg-opacity-60 px-4 py-2 rounded-full">View</span>
+                            </a>
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+    
+            <div id="modal-footer" class="bg-gray-50 px-6 py-4 border-t flex justify-end gap-3">
+                <button onclick="closeModal('details-modal')" class="px-5 py-2.5 bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 rounded-lg transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar Toggle
+        document.querySelector("#btn").onclick = () => document.querySelector(".sidebar").classList.toggle("close");
+        
+        const tableBody = document.getElementById('requests-table-body');
+        let allRequestsData = []; 
+        let currentAssignId = null;
+
+        // --- 1. FETCH DATA ---
+        async function fetchAllRequests() {
+            tableBody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Loading...</td></tr>`;
+            try {
+                const response = await fetch('/api/admin/all-requests');
+                if (response.status === 401 || response.status === 403) { window.location.href = 'index.html'; return; }
+                
+                allRequestsData = await response.json();
+                renderTable(allRequestsData);
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-red-500">Error loading data</td></tr>`;
+            }
+        }
+
+        // --- 2. RENDER TABLE ---
+        function renderTable(requests) {
+            if (requests.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-gray-500">No requests found.</td></tr>`;
+                return;
+            }
+            tableBody.innerHTML = '';
+            
+            requests.forEach(req => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-100 hover:bg-blue-50/30 transition';
+                const date = new Date(req.created_at).toLocaleDateString();
+                
+                let actionButtons = '';
+                // Logic for Buttons based on Status
+                if (req.status === 'Pending') {
+                    actionButtons = `
+                        <div class="flex justify-center gap-2">
+                            <button onclick="openDetailsModal(${req.request_id})" class="text-blue-600 bg-blue-100 p-2 rounded hover:bg-blue-200"><i class="fas fa-eye"></i></button>
+                            <button onclick="openAssignModal(${req.request_id})" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">Assign</button>
+                        </div>`;
+                } else if (req.status === 'Work Done') {
+                    // Staff finished work -> Admin needs to review
+                    actionButtons = `
+                        <div class="flex justify-center gap-2">
+                            <button onclick="openDetailsModal(${req.request_id})" class="bg-green-600 text-white px-3 py-1 rounded text-sm shadow animate-pulse hover:bg-green-700">
+                                <i class="fas fa-search mr-1"></i> Review
+                            </button>
+                        </div>`;
+                } else {
+                    actionButtons = `
+                        <div class="flex justify-center gap-2">
+                            <button onclick="openDetailsModal(${req.request_id})" class="text-blue-600 bg-blue-100 p-2 rounded hover:bg-blue-200"><i class="fas fa-eye"></i></button>
+                        </div>`;
+                }
+
+                row.innerHTML = `
+                    <td class="p-4 font-bold text-gray-600">#${req.request_id}</td>
+                    <td class="p-4">${req.student_name}</td>
+                    <td class="p-4 text-sm">${req.service_type}</td>
+                    <td class="p-4 text-blue-600 text-sm">${req.staff_name || '<span class="text-gray-400 italic">Unassigned</span>'}</td>
+                    <td class="p-4 text-gray-500 text-sm">${date}</td>
+                    <td class="p-4">${getStatusBadge(req.status)}</td>
+                    <td class="p-4 text-center">${actionButtons}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // --- 3. MODAL LOGIC ---
+        function openDetailsModal(id) {
+            const req = allRequestsData.find(r => r.request_id === id);
+            if (!req) return;
+
+            document.getElementById('modal-id').innerText = req.request_id;
+            document.getElementById('modal-name').innerText = req.student_name;
+            document.getElementById('modal-location').innerText = `${req.building} - ${req.room}`;
+            document.getElementById('modal-desc').innerText = req.description;
+            document.getElementById('modal-status').innerHTML = getStatusBadge(req.status);
+
+            // Images
+            const imgBefore = document.getElementById('img-before');
+            const linkBefore = document.getElementById('link-before');
+            if (req.image_path) {
+                imgBefore.src = req.image_path; imgBefore.classList.remove('hidden'); linkBefore.href = req.image_path;
+            } else { imgBefore.classList.add('hidden'); }
+
+            const imgAfter = document.getElementById('img-after');
+            const pMsg = document.getElementById('pending-msg-after');
+            const linkAfter = document.getElementById('link-after');
+
+            if (req.staff_proof_image) {
+                imgAfter.src = req.staff_proof_image; imgAfter.classList.remove('hidden'); 
+                pMsg.classList.add('hidden'); linkAfter.href = req.staff_proof_image;
+            } else {
+                imgAfter.classList.add('hidden'); pMsg.classList.remove('hidden');
+            }
+
+            // --- APPROVAL BUTTON LOGIC ---
+            const footer = document.getElementById('modal-footer');
+            
+            // Show Approve button ONLY if status is 'Work Done'
+            if (req.status === 'Work Done') {
+                footer.innerHTML = `
+                    <button onclick="approveRequest(${req.request_id})" class="px-5 py-2.5 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 shadow-lg mr-2 flex items-center gap-2 transition-transform hover:-translate-y-0.5">
+                        <i class="fas fa-check-double"></i> Approve & Finish
+                    </button>
+                    <button onclick="closeModal('details-modal')" class="px-5 py-2.5 bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 rounded-lg transition">Close</button>
+                `;
+            } else {
+                footer.innerHTML = `<button onclick="closeModal('details-modal')" class="px-5 py-2.5 bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 rounded-lg">Close</button>`;
+            }
+
+            document.getElementById('details-modal').classList.remove('hidden');
+        }
+
+        // --- 4. APPROVE FUNCTION ---
+        async function approveRequest(id) {
+            if(!confirm("Are you sure you want to approve this work? This will notify the student.")) return;
+
+            try {
+                const res = await fetch('/api/admin/update-status', {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ requestId: id, status: 'Completed' })
+                });
+                
+                if(res.ok) {
+                    closeModal('details-modal');
+                    fetchAllRequests(); // Refresh
+                    alert("Request Approved & Marked Completed!");
+                } else {
+                    alert("Failed to update.");
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        // --- 5. ASSIGN LOGIC ---
+        async function openAssignModal(id) {
+            currentAssignId = id;
+            document.getElementById('assign-modal').classList.remove('hidden');
+            const select = document.getElementById('staff-select');
+            select.innerHTML = '<option>Loading...</option>';
+            
+            const res = await fetch('/api/admin/staff-list');
+            const list = await res.json();
+            select.innerHTML = '<option value="">Select Staff</option>';
+            list.forEach(s => select.innerHTML += `<option value="${s.id}">${s.name} (${s.staff_id})</option>`);
+        }
+
+        async function submitAssignment() {
+            const staffId = document.getElementById('staff-select').value;
+            if (!staffId) return alert("Select staff.");
+            
+            await fetch('/api/admin/assign-task', {
+                method: 'PUT', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ requestId: currentAssignId, staffId })
+            });
+            closeModal('assign-modal');
+            fetchAllRequests();
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function logout() { fetch('/api/logout', {method:'POST'}).then(()=>window.location.href='index.html'); }
+
+        function getStatusBadge(status) {
+            if(status==='Pending') return `<span class="bg-orange-100 text-orange-600 px-2 py-1 rounded text-xs font-bold">Pending</span>`;
+            if(status==='Assigned') return `<span class="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-bold">Assigned</span>`;
+            if(status==='In Progress') return `<span class="bg-purple-100 text-purple-600 px-2 py-1 rounded text-xs font-bold">Processing</span>`;
+            if(status==='Work Done') return `<span class="bg-indigo-100 text-indigo-600 px-2 py-1 rounded text-xs font-bold border border-indigo-200">Review Needed</span>`;
+            if(status==='Completed') return `<span class="bg-green-100 text-green-600 px-2 py-1 rounded text-xs font-bold">Completed</span>`;
+            return status;
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchAllRequests);
+    </script>
+</body>
+</html>

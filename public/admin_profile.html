@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        :root {
+            --main-bg: #f7f9fc;
+        }
+
+        body {
+            background: var(--main-bg);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- SIDEBAR STYLES --- */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 260px;
+            background: #1e3a8a;
+            padding: 10px 14px;
+            transition: all 0.4s ease;
+            z-index: 100;
+        }
+
+        .sidebar .logo-details {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            position: relative;
+        }
+        
+        .sidebar .logo-details .logo-img {
+            height: 40px;
+            width: auto;
+        }
+
+        .sidebar .logo-details .logo_name {
+            font-size: 22px;
+            color: #fff;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .sidebar .logo-details #btn {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 22px;
+            cursor: pointer;
+            color: #fff;
+            text-align: center;
+            width: 50px;
+            transition: all 0.4s ease;
+        }
+
+        .sidebar .nav-links {
+            margin-top: 20px;
+            height: calc(100% - 160px);
+            padding: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar .nav-links li a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #E0E0E0;
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .sidebar .nav-links li a:hover {
+            background: #ffffff1a;
+            color: #fff;
+        }
+
+        .sidebar .nav-links li a.active {
+            background: #fff;
+            color: #11101D;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-links li i {
+            min-width: 50px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar .nav-links li .link_name {
+            white-space: nowrap;
+            overflow: hidden;
+            transition: opacity 0.3s ease, max-width 0.4s ease;
+            max-width: 150px;
+        }
+        
+        /* --- UNIFIED PROFILE SECTION STYLES --- */
+        .sidebar .profile-details {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #1d1b31;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            transition: all 0.4s ease;
+        }
+
+        .sidebar .profile-details img {
+            height: 48px;
+            width: 48px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .sidebar .profile-details .profile_name {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .sidebar .profile-details .job {
+            color: #e0e0e0;
+            font-size: 12px;
+        }
+
+        .sidebar .profile-details a {
+            margin-left: auto;
+            color: #fff;
+            font-size: 22px;
+            transition: color 0.3s ease;
+        }
+        .sidebar .profile-details a:hover {
+            color: #ffcccc;
+        }
+        
+        .sidebar.close {
+            width: 78px;
+        }
+
+        .sidebar.close .logo-details .logo_name,
+        .sidebar.close .logo-details .logo-img {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .sidebar.close .logo-details #btn {
+            right: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .sidebar.close .nav-links li a {
+            justify-content: center;
+        }
+        
+        .sidebar.close .nav-links li .link_name {
+            max-width: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .sidebar.close .profile-details {
+            background: none;
+            justify-content: center;
+        }
+        
+        .sidebar.close .profile-details img {
+            margin-right: 0;
+        }
+
+        .sidebar.close .profile-details .name-job,
+        .sidebar.close .profile-details a {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .home-section {
+            position: relative;
+            background: var(--main-bg);
+            min-height: 100vh;
+            left: 260px;
+            width: calc(100% - 260px);
+            transition: all 0.4s ease;
+            padding: 0;
+        }
+
+        .sidebar.close ~ .home-section {
+            left: 78px;
+            width: calc(100% - 78px);
+        }
+    </style>
+</head>
+<body>
+     <div class="sidebar">
+        <div class="logo-details"> 
+             <a href="admin.html"> <img src="images/mit.png" class="logo-img"> </a>
+             <span class="logo_name"></span>
+             <i class="fa-solid fa-bars" id="btn"></i>  
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="admin.html">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="link_name">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin_Manage_Requests.html">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span class="link_name">Manage Requests</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin_Profile.html" class="active">
+                    <i class="fa-solid fa-user-cog"></i>
+                    <span class="link_name">Admin Profile</span>
+                </a>
+            </li>
+        </ul>
+        <div class="profile-details">
+            <img src="https://placehold.co/80x80/EBF4FF/1e3a8a?text=BK" alt="profile">
+            <div class="name-job">
+                <div class="profile_name"></div>
+                <div class="job">Administrator</div>
+            </div>
+            <a href="index.html"><i class="fa-solid fa-right-from-bracket" id="log_out"></i></a>
+        </div>
+    </div>
+
+    <section class="home-section">
+      <div class="flex-1 flex flex-col overflow-hidden h-screen">
+            <header class="bg-white shadow-sm flex-shrink-0">
+                <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-gray-800" style="font-family: 'Inter', sans-serif;">Admin Profile</h1>
+                    <div class="flex items-center gap-4">
+                        <span class="font-semibold hidden sm:block" style="font-family: 'Inter', sans-serif;">Welcome, Admin!</span>
+                        <img src="https://placehold.co/40x40/EBF4FF/1e3a8a?text=BK" class="w-10 h-10 rounded-full" alt="User Avatar">
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[--main-bg] p-6" style="font-family: 'Inter', sans-serif;">
+                <div class="container mx-auto">
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1">
+                            <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                                <img src="https://placehold.co/128x128/EBF4FF/1e3a8a?text=BK" class="w-32 h-32 rounded-full mx-auto mb-4" alt="Admin Avatar">
+                                <h2 class="text-2xl font-bold text-gray-800">Bhagyashree Kendhe</h2>
+                                <p class="text-gray-500">Administrator</p>
+                                <button class="mt-4 w-full bg-blue-100 text-blue-700 font-semibold py-2 px-4 rounded-lg hover:bg-blue-200">
+                                    Change Picture
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <div class="bg-white rounded-2xl shadow-lg p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-4">Profile Settings</h3>
+                                <form>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-gray-600 font-medium mb-1">Full Name</label>
+                                            <input type="text" value="Bhagyashree Kendhe" class="w-full p-2 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-600 font-medium mb-1">Email Address</label>
+                                            <input type="email" value="bhagyashree.k@example.com" class="w-full p-2 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-600 font-medium mb-1">Role</label>
+                                            <input type="text" value="Administrator" class="w-full p-2 border rounded-lg bg-gray-200" readonly>
+                                        </div>
+                                         <div>
+                                            <label class="block text-gray-600 font-medium mb-1">Contact Number</label>
+                                            <input type="tel" value="+91 98765 43210" class="w-full p-2 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="mt-6 bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700">
+                                        Update Profile
+                                    </button>
+                                </form>
+                            </div>
+
+                             <div class="bg-white rounded-2xl shadow-lg p-6 mt-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-4">Change Password</h3>
+                                <form>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-gray-600 font-medium mb-1">Current Password</label>
+                                            <input type="password" placeholder="••••••••" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-600 font-medium mb-1">New Password</label>
+                                            <input type="password" placeholder="••••••••" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="mt-6 bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg hover:bg-gray-800">
+                                        Save Password
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <script>
+        let btn = document.querySelector("#btn");
+        let sidebar = document.querySelector(".sidebar");
+
+        btn.onclick = function () {
+            sidebar.classList.toggle("close");
+        }
+    </script>
+</body>
+</html>

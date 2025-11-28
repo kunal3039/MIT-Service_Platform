@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Cleaning Issue - CampusCare</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+        :root { --main-bg: #f7f9fc; --sidebar-blue: #1e3a8a; }
+        body { background: var(--main-bg); min-height: 100vh; }
+        
+        /* Unified Selector Styles */
+        .search-item { @apply flex items-center p-3 rounded-lg border-2 border-transparent cursor-pointer transition-all duration-200; }
+        .search-item.highlight, .search-item:hover { @apply bg-blue-100 text-blue-800 font-semibold ring-2 ring-blue-200; transform: translateX(4px); }
+        .search-item.selected { @apply bg-blue-200 border-blue-600 font-semibold text-blue-900 shadow-lg; transform: scale(1.02); }
+
+        /* Sidebar Styles */
+        .sidebar { position: fixed; left: 0; top: 0; height: 100%; width: 260px; background: var(--sidebar-blue); padding: 10px 14px; transition: all 0.4s ease; z-index: 100; }
+        .sidebar.close { width: 78px; }
+        .sidebar .logo-details { display: flex; align-items: center; height: 60px; position: relative; }
+        .sidebar .logo-details .logo-img { height: 40px; }
+        .sidebar .logo-details #btn { position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 22px; cursor: pointer; color: #fff; width: 50px; text-align: center;}
+        .sidebar.close .logo-details #btn { right: 50%; transform: translate(50%, -50%);}
+        .sidebar .nav-links { margin-top: 20px; height: calc(100% - 160px); overflow: auto; padding: 0; }
+        .sidebar .nav-links::-webkit-scrollbar { display: none; }
+        .sidebar .nav-links li { list-style: none; margin: 8px 0; position: relative; }
+        .sidebar .nav-links li a { display: flex; align-items: center; text-decoration: none; color: #E0E0E0; border-radius: 12px; padding: 12px; transition: all 0.3s ease; }
+        .sidebar .nav-links li a:hover { background: #ffffff1a; color: #fff; }
+        .sidebar .nav-links li a.active { background: #fff; color: #11101D; font-weight: 500;}
+        .sidebar .nav-links li i { min-width: 50px; text-align: center; font-size: 18px; }
+        .sidebar .profile-details { position: absolute; bottom: 0; left: 0; width: 260px; background: #1d1b31; padding: 12px; display: flex; align-items: center; transition: all 0.4s ease; }
+        .sidebar.close .profile-details { width: 78px; background: none; justify-content: center; }
+        .sidebar .profile-details img { height: 48px; width: 48px; object-fit: cover; border-radius: 12px; margin-right: 10px; flex-shrink: 0; }
+        .sidebar.close .profile-details img { margin-right: 0; }
+        .sidebar.close .profile-details .profile_name, .sidebar.close .profile-details .job, .sidebar.close .profile-details #log_out { opacity: 0; pointer-events: none; }
+        .sidebar .profile-details #log_out { position: absolute; right: 0; width: 50px; text-align: center; color: #fff; font-size: 22px; cursor: pointer; }
+
+        /* Main Content Section */
+        .home-section { position: relative; background: var(--main-bg); min-height: 100vh; left: 260px; width: calc(100% - 260px); transition: all 0.4s ease; padding: 0; }
+        .sidebar.close ~ .home-section { left: 78px; width: calc(100% - 78px); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-details"> 
+            <a href="home.html"> <img src="images/mit.png" class="logo-img"> </a>
+            <i class="fa-solid fa-bars" id="btn"></i>   
+        </div>
+        <ul class="nav-links">
+            <li><a href="home.html" class="active"><i class="fa-solid fa-home"></i><span class="link_name">Home</span></a></li>
+            <li><a href="requist.html"><i class="fa-solid fa-clipboard-list"></i><span class="link_name">My Requests</span></a></li>
+            <li><a href="notification.html"><i class="fa-solid fa-bell"></i><span class="link_name">Notifications</span></a></li>
+            <li><a href="mydetails.html"><i class="fa-solid fa-user-circle"></i><span class="link_name">My Details</span></a></li>
+        </ul>
+        <div class="profile-details">
+            <img src="https://placehold.co/80x80/EBF4FF/003366?text=K" alt="profile">
+            <div class="name-job">
+                <div class="profile_name">Kunal</div>
+                <div class="job">Student</div>
+            </div>
+           <a href="index.html" class="flex items-center"><i class="fa-solid fa-right-to-bracket" id="log_out"></i></a>
+        </div>
+    </div>
+
+    <section class="home-section">
+        <div class="flex-1 flex flex-col overflow-hidden h-screen">
+            <header class="bg-white shadow-sm flex-shrink-0">
+                <div class="px-6 py-4 flex justify-between items-center">
+                    <h1 id="page-title" class="text-2xl font-bold text-gray-800">Report an Issue</h1>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[--main-bg] p-6">
+                <div class="container mx-auto">
+                    <div id="form-container" class="bg-white p-8 rounded-2xl shadow-lg">
+                        <div class="flex items-center gap-4 mb-6 pb-6 border-b">
+                            <div class="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <img src="images/clean.png" alt="Cleaning Icon"></div>
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-800">Cleaning Service Request</h1>
+                                <p class="text-gray-500">Please provide the location and details for the cleaning.</p>
+                            </div>
+                        </div>
+                        
+                        <form id="cleaning-form" class="space-y-8">
+                            <div>
+                                <label class="block text-lg font-semibold text-gray-700 mb-4">1. Select Building and specify location <span class="text-red-500">*</span></label>
+                                <div class="bg-gray-50 p-4 rounded-xl">
+                                    <div class="relative">
+                                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                        <input type="search" id="building-search" placeholder="Search building..." autocomplete="off" class="w-full pl-12 pr-4 py-3 bg-white border-2 border-gray-200 rounded-xl transition">
+                                    </div>
+                                    <div id="building-options" class="hidden mt-4 space-y-2 max-h-48 overflow-y-auto pr-4">
+                                        <div class="search-item" data-building-name="Tech Building"><i class="fas fa-laptop-code w-6 text-center mr-3 text-gray-500"></i>Tech Building</div>
+                                        <div class="search-item" data-building-name="Maratha Building"><i class="fas fa-landmark w-6 text-center mr-3 text-gray-500"></i>Maratha Building</div>
+                                        <div class="search-item" data-building-name="Polytechnic Building"><i class="fas fa-drafting-compass w-6 text-center mr-3 text-gray-500"></i>Polytechnic Building</div>
+                                        <div class="search-item" data-building-name="Agriculture Building"><i class="fas fa-seedling w-6 text-center mr-3 text-gray-500"></i>Agriculture Building</div>
+                                    </div>
+                                </div>
+                                <div id="location-details-container" class="hidden grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-600 mb-1">Floor Number <span class="text-red-500">*</span></label>
+                                        <input type="number" id="floor-input" placeholder="e.g., 2" class="w-full p-3 bg-gray-100 border rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-600 mb-1">Room or Area <span class="text-red-500">*</span></label>
+                                        <input type="text" id="room-input" placeholder="e.g., 204 or near staircase" class="w-full p-3 bg-gray-100 border rounded-lg">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-lg font-semibold text-gray-700 mb-3">2. Describe the issue (optional)</label>
+                                <textarea id="details-input" rows="3" class="w-full p-3 bg-gray-100 border rounded-lg" placeholder="e.g., Coffee spilled on the floor, dust accumulation..."></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-lg font-semibold text-gray-700 mb-3">3. Upload an image (optional)</label>
+                                <div class="bg-gray-50 p-4 rounded-xl border-dashed border-2 border-gray-300 text-center">
+                                    <input type="file" id="image-upload" accept="image/*" class="hidden">
+                                    <label for="image-upload" class="cursor-pointer text-blue-700 hover:text-blue-900 font-semibold flex items-center justify-center p-4">
+                                        <i class="fas fa-cloud-upload-alt text-2xl mr-3"></i>
+                                        Click to upload image or drag and drop
+                                    </label>
+                                    <p id="file-name" class="text-sm text-gray-500 mt-2"></p>
+                                    <div id="image-preview" class="hidden mt-4 flex justify-center">
+                                        <img src="#" alt="Image Preview" class="max-w-xs max-h-40 object-contain rounded-lg shadow-md">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 text-right">
+                                <button type="button" id="submit-btn" class="bg-blue-800 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                    Submit Request
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="success-container" class="hidden bg-white p-8 rounded-2xl shadow-lg text-center">
+                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                            <i class="fas fa-check text-4xl text-green-600"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mt-6">Request Submitted!</h2>
+                        <p class="text-gray-500 mt-2">We have received your request. You can check its status on the 'My Requests' page.</p>
+                        <a href="home.html">
+                            <button class="mt-8 bg-blue-800 text-white font-bold py-3 px-8 rounded-lg shadow-lg">
+                                Back to Home
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <script>
+        // --- Sidebar toggle ---
+        document.getElementById("btn").onclick = () => document.querySelector(".sidebar").classList.toggle("close");
+
+        // --- All Form Elements ---
+        const buildingSearch = document.getElementById('building-search');
+        const optionsContainer = document.getElementById('building-options');
+        const locationDetailsContainer = document.getElementById('location-details-container');
+        const floorInput = document.getElementById('floor-input');
+        const roomInput = document.getElementById('room-input');
+        const detailsInput = document.getElementById('details-input');
+        const imageUploadInput = document.getElementById('image-upload');
+        const fileNameDisplay = document.getElementById('file-name');
+        const imagePreviewContainer = document.getElementById('image-preview');
+        const imagePreview = imagePreviewContainer.querySelector('img');
+        const submitBtn = document.getElementById('submit-btn');
+        const formContainer = document.getElementById('form-container');
+        const successContainer = document.getElementById('success-container');
+
+        // --- Searchable Select Logic ---
+        buildingSearch.addEventListener('input', () => {
+            const searchTerm = buildingSearch.value.toLowerCase();
+            optionsContainer.classList.remove('hidden');
+            document.querySelectorAll('.search-item').forEach(item => {
+                const isMatch = item.dataset.buildingName.toLowerCase().includes(searchTerm);
+                item.classList.toggle('hidden', !isMatch);
+            });
+            validateForm();
+        });
+
+        optionsContainer.addEventListener('click', (e) => {
+            const selectedItem = e.target.closest('.search-item');
+            if (!selectedItem) return;
+            document.querySelectorAll('.search-item').forEach(item => item.classList.remove('selected'));
+            selectedItem.classList.add('selected');
+            buildingSearch.value = selectedItem.dataset.buildingName;
+            optionsContainer.classList.add('hidden');
+            locationDetailsContainer.style.display = 'grid';
+            locationDetailsContainer.classList.remove('hidden');
+            validateForm();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!buildingSearch.contains(e.target) && !optionsContainer.contains(e.target)) {
+                optionsContainer.classList.add('hidden');
+            }
+        });
+
+        // --- Image Upload Logic ---
+        imageUploadInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                fileNameDisplay.textContent = `Selected: ${file.name}`;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreviewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileNameDisplay.textContent = '';
+                imagePreviewContainer.classList.add('hidden');
+                imagePreview.src = '#';
+            }
+        });
+
+        // --- Form Validation ---
+        function validateForm() {
+            const isBuildingSelected = buildingSearch.value.trim() !== '' && 
+                                     document.querySelector(`.search-item[data-building-name="${buildingSearch.value.trim()}"]`);
+            const isFloorValid = floorInput.value.trim() !== '';
+            const isRoomValid = roomInput.value.trim() !== '';
+            submitBtn.disabled = !(isBuildingSelected && isFloorValid && isRoomValid);
+        }
+        
+        [buildingSearch, floorInput, roomInput].forEach(input => input.addEventListener('input', validateForm));
+        validateForm(); 
+
+        // --- UPDATED SUBMIT LOGIC (USING FORMDATA) ---
+        submitBtn.addEventListener('click', async () => {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+
+            // Create FormData Object
+            const formData = new FormData();
+            formData.append('service_type', 'Cleaning');
+            formData.append('building', buildingSearch.value.trim());
+            formData.append('floor', floorInput.value.trim());
+            formData.append('room', roomInput.value.trim());
+            formData.append('description', detailsInput.value.trim());
+            
+            // Append image if selected
+            if (imageUploadInput.files[0]) {
+                formData.append('image', imageUploadInput.files[0]);
+            }
+
+            try {
+                const response = await fetch('/api/requests', {
+                    method: 'POST',
+                    // Note: DO NOT set 'Content-Type' to 'application/json' when using FormData
+                    // Browser automatically sets 'multipart/form-data' with boundary
+                    body: formData
+                });
+
+                if (response.ok) {
+                    formContainer.classList.add('hidden');
+                    successContainer.classList.remove('hidden');
+                } else if (response.status === 401) {
+                    alert('You are not logged in. Redirecting to login page.');
+                    window.location.href = 'index.html';
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.message || 'Failed to submit the request.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Submit Request';
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('An error occurred. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit Request';
+            }
+        });
+    </script>
+</body>
+</html>

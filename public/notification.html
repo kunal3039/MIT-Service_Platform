@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - CampusCare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        :root {
+            --main-bg: #f7f9fc;
+            --sidebar-blue: #1e3a8a;
+        }
+
+        body {
+            background: var(--main-bg);
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed; left: 0; top: 0; height: 100%; width: 260px;
+            background: var(--sidebar-blue); padding: 10px 14px;
+            transition: all 0.4s ease; z-index: 100;
+        }
+        .sidebar.close { width: 78px; }
+        .sidebar .logo-details { display: flex; align-items: center; height: 60px; position: relative; }
+        .sidebar .logo-details .logo-img { height: 40px; width: auto; min-width: initial; transition: all 0.3s ease; }
+        .sidebar .logo-details .logo_name { font-size: 22px; color: #fff; font-weight: 600; white-space: nowrap; opacity: 1; transition: 0.3s; }
+        .sidebar.close .logo-details .logo_name, .sidebar.close .logo-details .logo-img { opacity: 0; pointer-events: none; }
+        .sidebar .logo-details #btn { position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 22px; cursor: pointer; color: #fff; text-align: center; width: 50px; }
+        .sidebar.close .logo-details #btn { right: 50%; transform: translate(50%, -50%); }
+        .sidebar .nav-links { margin-top: 20px; height: calc(100% - 160px); padding: 0; overflow: auto; }
+        .sidebar .nav-links::-webkit-scrollbar { display: none; }
+        .sidebar .nav-links li { list-style: none; position: relative; margin: 8px 0; }
+        .sidebar .nav-links li a { display: flex; align-items: center; text-decoration: none; color: #E0E0E0; border-radius: 12px; padding: 12px; transition: all 0.3s ease; }
+        .sidebar .nav-links li a:hover { background: #ffffff1a; color: #fff; }
+        .sidebar .nav-links li a.active { background: #fff; color: #11101D; font-weight: 500; }
+        .sidebar .nav-links li i { min-width: 50px; text-align: center; font-size: 18px; }
+        .sidebar .nav-links li .link_name { white-space: nowrap; opacity: 1; pointer-events: auto; }
+        .sidebar.close .nav-links li .link_name { opacity: 0; pointer-events: none; }
+        .sidebar .profile-details { position: absolute; bottom: 0; left: 0; width: 260px; background: #1d1b31; padding: 12px; display: flex; align-items: center; transition: all 0.4s ease; }
+        .sidebar.close .profile-details { width: 78px; background: none; justify-content: center; }
+        .sidebar .profile-details img { height: 48px; width: 48px; object-fit: cover; border-radius: 12px; margin-right: 10px; flex-shrink: 0; }
+        .sidebar.close .profile-details img { margin-right: 0; }
+        .sidebar .profile-details .profile_name, .sidebar .profile-details .job { color: #fff; white-space: nowrap; }
+        .sidebar .profile-details #log_out { position: absolute; right: 0; width: 50px; text-align: center; color: #fff; font-size: 22px; cursor: pointer; }
+        .sidebar.close .profile-details .profile_name, .sidebar.close .profile-details .job, .sidebar.close .profile-details #log_out { opacity: 0; pointer-events: none; }
+
+        .home-section {
+            position: relative; background: var(--main-bg); min-height: 100vh;
+            left: 260px; width: calc(100% - 260px);
+            transition: all 0.4s ease; padding: 0;
+        }
+        .sidebar.close ~ .home-section { left: 78px; width: calc(100% - 78px); }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+         <div class="logo-details"> 
+            <a href="home.html"> <img src="images/mit.png" class="logo-img"> </a>
+            <i class="fa-solid fa-bars" id="btn"></i>   
+        </div>
+        <ul class="nav-links">
+            <li><a href="home.html"><i class="fa-solid fa-home"></i><span class="link_name">Home</span></a></li>
+            <li><a href="requist.html"><i class="fa-solid fa-clipboard-list"></i><span class="link_name">My Requests</span></a></li>
+            <li><a href="notification.html" class="active"><i class="fa-solid fa-bell"></i><span class="link_name">Notifications</span></a></li>
+            <li><a href="mydetails.html"><i class="fa-solid fa-user-circle"></i><span class="link_name">My Details</span></a></li>
+        </ul>
+        <div class="profile-details">
+            <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" id="user-avatar" alt="profile">
+            <div class="name-job"><div class="profile_name" id="sidebar-name">Loading...</div><div class="job">Student</div></div>
+            <a href="#" onclick="logout()"><i class="fa-solid fa-right-to-bracket" id="log_out"></i></a>
+        </div>
+    </div>
+
+    <section class="home-section">
+        <div class="flex-1 flex flex-col overflow-hidden h-screen">
+            <header class="bg-white shadow-sm flex-shrink-0">
+                <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-gray-800">Notifications</h1>
+                    <div class="flex items-center gap-4">
+                        <span id="user-name-header" class="font-semibold hidden sm:block">Welcome!</span>
+                        <img src="https://placehold.co/40x40/EBF4FF/003366?text=K" class="w-10 h-10 rounded-full" alt="User Avatar">
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[--main-bg] p-6">
+                <div class="container mx-auto max-w-4xl">
+                    <div class="flex justify-between items-center mb-8">
+                         <h1 class="text-3xl font-bold text-gray-800">Activity Log</h1>
+                         <span class="text-sm text-gray-500" id="notification-count">Checking updates...</span>
+                    </div>
+                    
+                    <div id="notification-list" class="space-y-4 fade-in">
+                        <p class="text-center text-gray-500 py-10">
+                            <i class="fas fa-circle-notch fa-spin mr-2"></i>Loading notifications...
+                        </p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <script>
+        // Sidebar Logic
+        document.querySelector("#btn").onclick = () => document.querySelector(".sidebar").classList.toggle("close");
+
+        // --- 1. INITIALIZE ---
+        async function init() {
+            try {
+                // Load User
+                const uRes = await fetch('/api/user');
+                const user = await uRes.json();
+                if(user.name) {
+                    document.getElementById('sidebar-name').innerText = user.name;
+                    document.getElementById('user-name-header').innerText = `Welcome, ${user.name}`;
+                }
+
+                // Fetch Real Notifications
+                fetchNotifications();
+
+            } catch (e) { console.error("Error loading user"); }
+        }
+
+        // --- 2. FETCH NOTIFICATIONS ---
+        async function fetchNotifications() {
+            const container = document.getElementById('notification-list');
+            try {
+                const response = await fetch('/api/my-notifications');
+                
+                if (response.status === 401) { window.location.href = 'index.html'; return; }
+                if (!response.ok) throw new Error("Failed");
+
+                const requests = await response.json();
+                renderNotifications(requests);
+
+            } catch (error) {
+                container.innerHTML = `<p class="text-center text-red-500">Failed to load notifications. Server might be down.</p>`;
+            }
+        }
+
+        // --- 3. RENDER LOGIC ---
+        function renderNotifications(requests) {
+            const container = document.getElementById('notification-list');
+            
+            // Filter out 'Pending' because that is the initial state (not an update)
+            // We want to show updates when Admin Assigns, Staff Works, or Admin Completes/Rejects
+            const updates = requests.filter(req => req.status !== 'Pending');
+
+            document.getElementById('notification-count').innerText = `${updates.length} Updates Found`;
+
+            if (updates.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-white rounded-2xl shadow border border-gray-100">
+                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-bell-slash text-2xl text-gray-300"></i>
+                        </div>
+                        <h3 class="text-gray-800 font-semibold">No new notifications</h3>
+                        <p class="text-gray-500 text-sm mt-1">We'll notify you when there's an update on your requests.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = updates.map(req => {
+                const timeAgo = getTimeAgo(new Date(req.updated_at || req.created_at));
+                
+                // Default Config
+                let config = {
+                    title: 'Status Update',
+                    message: `Your request status has changed to <b>${req.status}</b>.`,
+                    icon: 'fa-info',
+                    bg: 'bg-gray-100',
+                    iconColor: 'text-gray-600',
+                    border: 'border-gray-200'
+                };
+
+                // Status Logic
+                if (req.status === 'Completed') {
+                    config = {
+                        title: 'Request Completed',
+                        message: `Your <b>${req.service_type}</b> request (ID: #${req.request_id}) has been successfully completed and verified by Admin.`,
+                        icon: 'fa-check-circle',
+                        bg: 'bg-green-100',
+                        iconColor: 'text-green-600',
+                        border: 'border-l-4 border-green-500'
+                    };
+                } else if (req.status === 'Assigned') {
+                    config = {
+                        title: 'Staff Assigned',
+                        message: `A staff member has been assigned to your <b>${req.service_type}</b> request (ID: #${req.request_id}).`,
+                        icon: 'fa-user-check',
+                        bg: 'bg-blue-100',
+                        iconColor: 'text-blue-600',
+                        border: 'border-l-4 border-blue-500'
+                    };
+                } else if (req.status === 'Work Done') {
+                    config = {
+                        title: 'Work Under Review',
+                        message: `Staff has completed work on <b>${req.service_type}</b> (ID: #${req.request_id}). Pending Admin approval.`,
+                        icon: 'fa-hourglass-half',
+                        bg: 'bg-indigo-100',
+                        iconColor: 'text-indigo-600',
+                        border: 'border-l-4 border-indigo-500'
+                    };
+                } else if (req.status === 'In Progress') {
+                    config = {
+                        title: 'Work Started',
+                        message: `Staff has started working on your <b>${req.service_type}</b> request (ID: #${req.request_id}).`,
+                        icon: 'fa-tools',
+                        bg: 'bg-purple-100',
+                        iconColor: 'text-purple-600',
+                        border: 'border-l-4 border-purple-500'
+                    };
+                } else if (req.status === 'Rejected' || req.status === 'Cancelled') {
+                    config = {
+                        title: 'Request Cancelled',
+                        message: `Your request for <b>${req.service_type}</b> (ID: #${req.request_id}) was cancelled/rejected.`,
+                        icon: 'fa-times-circle',
+                        bg: 'bg-red-100',
+                        iconColor: 'text-red-600',
+                        border: 'border-l-4 border-red-500'
+                    };
+                }
+
+                return `
+                    <div class="bg-white rounded-xl shadow-sm p-5 flex items-start gap-4 ${config.border} hover:shadow-md transition duration-200">
+                        <div class="w-10 h-10 ${config.bg} rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas ${config.icon} ${config.iconColor}"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-bold text-gray-800 text-base">${config.title}</h3>
+                            <p class="text-sm text-gray-600 mt-1 leading-relaxed">${config.message}</p>
+                            <p class="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                                <i class="far fa-clock"></i> ${timeAgo}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- Helper: Time Ago ---
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " years ago";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " months ago";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " days ago";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " hours ago";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " mins ago";
+            return "Just now";
+        }
+
+        function logout() { fetch('/api/logout', {method:'POST'}).then(()=>window.location.href='index.html'); }
+
+        init();
+    </script>
+</body>
+</html>

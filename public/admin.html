@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - CampusCare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+        :root { --main-bg: #f7f9fc; }
+
+        body { background: var(--main-bg); min-height: 100vh; }
+
+        /* SIDEBAR SAME AS ORIGINAL */
+        .sidebar { position: fixed; left: 0; top: 0; height: 100%; width: 260px; background: #1e3a8a; padding: 10px 14px; transition: all 0.4s ease; z-index: 100; }
+        .sidebar.close { width: 78px; }
+        .sidebar .logo-details { display: flex; align-items: center; height: 60px; position: relative; }
+        .sidebar .logo-img { height: 40px; }
+        .sidebar #btn { position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 22px; cursor: pointer; color: #fff; width: 50px; }
+        .sidebar.close #btn { right: 50%; transform: translate(50%, -50%); }
+        .sidebar .nav-links { margin-top: 20px; height: calc(100% - 160px); overflow-y: auto; }
+        .sidebar .nav-links li a { display: flex; align-items: center; padding: 12px; border-radius: 12px; color: #E0E0E0; text-decoration: none; transition: .3s; }
+        .sidebar .nav-links li a:hover { background: #ffffff1a; color: #fff; }
+        .sidebar .nav-links li a.active { background: #fff; color: #11101D; font-weight: 600; }
+        .sidebar .profile-details { position: absolute; bottom: 0; left: 0; width: 100%; background: #1d1b31; padding: 12px; display: flex; align-items: center; }
+.sidebar .profile-details img { height: 48px; width: 48px; object-fit: cover; border-radius: 12px; margin-right: 10px; }
+
+        /* MAIN SECTION */
+        .home-section { position: relative; left: 260px; width: calc(100% - 260px); transition: all 0.4s ease; }
+        .sidebar.close ~ .home-section { left: 78px; width: calc(100% - 78px); }
+    </style>
+</head>
+
+<body>
+    <!-- SIDEBAR SAME -->
+    <div class="sidebar">
+        <div class="logo-details">
+            <a href="admin.html"><img src="images/mit.png" class="logo-img" /></a>
+            <i class="fa-solid fa-bars" id="btn"></i>
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="admin.html" class="active"><i class="fa-solid fa-house"></i><span class="link_name">Dashboard</span></a></li>
+            <li><a href="admin_Manage_Requests.html"><i class="fa-solid fa-list-check"></i><span class="link_name">Manage Requests</span></a></li>
+            <li><a href="admin_Profile.html"><i class="fa-solid fa-user-cog"></i><span class="link_name">Admin Profile</span></a></li>
+        </ul>
+
+        <div class="profile-details">
+            <img src="https://placehold.co/48x48/EBF4FF/003366?text=BK" />
+            <div class="name-job">
+                <div class="profile_name">Admin</div>
+                <div class="job">Administrator</div>
+            </div>
+            <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i></a>
+        </div>
+    </div>
+
+    <!-- DASHBOARD UPDATED -->
+    <section class="home-section">
+        <div class="p-6">
+            <h1 class="text-3xl font-bold mb-6" style="font-family: Inter">Admin Dashboard</h1>
+
+            <!-- CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div class="bg-white rounded-2xl p-6 shadow hover:shadow-xl transition">
+                    <p class="text-sm text-gray-500">Total Requests</p>
+                    <p id="total-requests" class="text-4xl font-bold text-blue-700">...</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow hover:shadow-xl transition">
+                    <p class="text-sm text-gray-500">Pending</p>
+                    <p id="pending-requests" class="text-4xl font-bold text-orange-600">...</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow hover:shadow-xl transition">
+                    <p class="text-sm text-gray-500">Completed</p>
+                    <p id="completed-requests" class="text-4xl font-bold text-green-600">...</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow hover:shadow-xl transition">
+                    <p class="text-sm text-gray-500">Active Users</p>
+                    <p id="active-users" class="text-4xl font-bold text-indigo-600">...</p>
+                </div>
+            </div>
+
+            <!-- GRAPHS SECTION -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+                <div class="bg-white p-6 rounded-2xl shadow">
+                    <h2 class="text-lg font-semibold mb-4">Requests Trend</h2>
+                    <canvas id="requestsChart"></canvas>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow">
+                    <h2 class="text-lg font-semibold mb-4">Status Breakdown</h2>
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="bg-white rounded-2xl shadow p-6">
+                <h2 class="text-xl font-bold mb-4">Recent Requests</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="border-b font-medium text-gray-600">
+                            <tr>
+                                <th class="p-4">ID</th>
+                                <th class="p-4">Student</th>
+                                <th class="p-4">Service</th>
+                                <th class="p-4">Date</th>
+                                <th class="p-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-requests-tbody">
+                            <tr><td colspan="5" class="p-4 text-center text-gray-500">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Sidebar toggle
+        document.querySelector('#btn').onclick = () => {
+            document.querySelector('.sidebar').classList.toggle('close');
+        };
+
+        // Fetch stats and show in cards + charts
+        async function fetchDashboardStats() {
+            const res = await fetch('/api/admin/stats');
+            const stats = await res.json();
+
+            document.getElementById('total-requests').textContent = stats.total_requests;
+            document.getElementById('pending-requests').textContent = stats.pending_requests;
+            document.getElementById('completed-requests').textContent = stats.completed_requests;
+            document.getElementById('active-users').textContent = stats.active_users;
+
+            loadCharts(stats);
+        }
+
+        function loadCharts(stats) {
+            // Line Chart
+            new Chart(document.getElementById('requestsChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Total', 'Pending', 'Completed'],
+                    datasets: [{ data: [stats.total_requests, stats.pending_requests, stats.completed_requests], borderWidth: 3 }]
+                }
+            });
+
+            // Pie Chart
+            new Chart(document.getElementById('statusChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Pending', 'Completed'],
+                    datasets: [{ data: [stats.pending_requests, stats.completed_requests] }]
+                }
+            });
+        }
+
+        // Recent Requests
+        async function fetchRecentRequests() {
+            const tbody = document.getElementById('recent-requests-tbody');
+            const res = await fetch('/api/admin/recent-requests');
+            const list = await res.json();
+
+            tbody.innerHTML = '';
+            list.forEach(r => {
+                tbody.innerHTML += `
+                    <tr class='border-b'>
+                        <td class='p-4'>#${r.request_id}</td>
+                        <td class='p-4'>${r.student_name}</td>
+                        <td class='p-4'>${r.service_type}</td>
+                        <td class='p-4'>${new Date(r.created_at).toLocaleDateString()}}</td>
+                        <td class='p-4'>${r.status}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        fetchDashboardStats();
+        fetchRecentRequests();
+    </script>
+</body>
+</html>

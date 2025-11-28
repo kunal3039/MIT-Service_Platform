@@ -1,0 +1,57 @@
+CREATE DATABASE college_management;
+USE college_management;
+=============================================stdudent info================================================
+
+CREATE TABLE students (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    college_id VARCHAR(20) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL
+);
+INSERT INTO students (college_id, name, email, password_hash)VALUES ('C001', 'Kunal Bulbule', 'kunal.bulbule@mit.asia', '$2b$10$0G6kp4Vj2M5HJy8bVg4qFOSKZsWzQdIVIXD9YwHl2n6mG4g7Uzz1G'),
+('C002', 'Aditya Lakhpati', 'aditya.lakhpati@mit.asia', '$2b$10$0G6kp4Vj2M5HJy8bVg4qFOSKZsWzQdIVIXD9YwHl2n6mG4g7Uzz1G'),
+('C003', 'Prakash Jha', 'prakash.jha@mit.asia', '$2b$10$0G6kp4Vj2M5HJy8bVg4qFOSKZsWzQdIVIXD9YwHl2n6mG4g7Uzz1G');
+
+
+=============================================admin==================================================== 
+
+
+CREATE TABLE admins (
+    admin_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL
+);
+
+INSERT INTO admins (name, email, password_hash)
+VALUES (
+    'Bhagyashree Kendhe',
+    'Bhagyashree.Kendhe@mit.asia',
+    'Yahaan-admin-ka-hash-paste-karein'
+);
+
+admin@mit 
+
+============================================myrequest==========================================================
+
+USE college_management;
+
+CREATE TABLE service_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    service_type VARCHAR(50) NOT NULL,
+    building VARCHAR(100) NOT NULL,
+    floor VARCHAR(50) NOT NULL,
+    room VARCHAR(100) NOT NULL,
+    description TEXT,
+    image_path VARCHAR(255),
+    status VARCHAR(20) DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(student_id)
+); 
+
+======================================staff=========================================================================
+
+INSERT INTO staff_users (staff_id, name, password) 
+VALUES ('STF-2025', 'Ramesh Bhai', 'Pass123');

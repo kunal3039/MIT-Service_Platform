@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusCare Dashboard - MIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        :root {
+             --main-bg: #f7f9fc;
+             --accent-green: #1ABB9C;
+        }
+
+        body {
+            background: var(--main-bg);
+            min-height: 100vh;
+        }
+
+        /* Sidebar Code Provided by User */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 260px; /* Increased width slightly for better spacing */
+            background: #1e3a8a;
+            padding: 10px 14px;
+            transition: all 0.4s ease;
+            z-index: 100;
+        }
+
+        .sidebar.close {
+            width: 78px;
+        }
+
+        .sidebar .logo-details {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            position: relative;
+        }
+
+        .sidebar .logo-details .logo-img {
+            height: 40px;    /* Size isse control hoga */
+            width: auto;       /* Shape isse sahi rahega */
+            min-width: initial; /* Purani setting ko reset kar diya */
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .logo-details .logo_name {
+            font-size: 22px;
+            color: #fff;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 1;
+            transition: 0.3s;
+        }
+        .sidebar.close .logo-details .logo_name,
+        .sidebar.close .logo-details .logo-img {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .sidebar .logo-details #btn {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 22px;
+            cursor: pointer;
+            color: #fff;
+            text-align: center;
+            width: 50px;
+        }
+        
+        /* FIX: Correctly center the toggle button when sidebar is closed */
+       .sidebar.close .logo-details #btn {
+            position: absolute;
+            top: 50%;
+            right: 50%; /* Center horizontally */
+            transform: translate(50%, -50%); /* Precise centering */
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .sidebar .nav-links {
+            margin-top: 20px;
+            height: calc(100% - 160px); /* Adjust height to accommodate profile */
+            padding: 0;
+            overflow: auto;
+        }
+        
+        .sidebar .nav-links::-webkit-scrollbar {
+            display: none;
+        }
+
+        .sidebar .nav-links li {
+            list-style: none;
+            position: relative;
+            margin: 8px 0;
+        }
+
+        .sidebar .nav-links li a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #E0E0E0;
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-links li a:hover {
+            background: #ffffff1a;
+            color: #fff;
+        }
+
+        .sidebar .nav-links li a.active {
+            background: #fff;
+            color: #11101D;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-links li i {
+            min-width: 50px;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .sidebar .nav-links li .link_name {
+            white-space: nowrap;
+        }
+
+        .sidebar.close .nav-links li .link_name {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+
+        .sidebar .profile-details {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 260px;
+            background: #1d1b31;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            transition: all 0.4s ease;
+        }
+
+        .sidebar.close .profile-details {
+            width: 78px;
+            background: none;
+            display: flex; /* Add flex properties */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+        }
+        .sidebar .profile-details img {
+            height: 48px;
+            width: 48px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-right: 10px;
+            flex-shrink: 0; /* Prevent image from shrinking */
+        }
+        
+        .sidebar.close .profile-details img {
+            margin-right: 0; /* Remove margin when closed */
+        }
+
+        .sidebar .profile-details .profile_name,
+        .sidebar .profile-details .job {
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .sidebar .profile-details .profile_name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .sidebar .profile-details .job {
+            font-size: 12px;
+        }
+
+        .sidebar.close .profile-details .profile_name,
+        .sidebar.close .profile-details .job,
+        .sidebar.close .profile-details #log_out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .sidebar .profile-details #log_out {
+            position: absolute;
+            right: 0;
+            width: 50px;
+            text-align: center;
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+        }
+        
+
+        /* Home section styles to work with sidebar */
+        .home-section {
+            position: relative;
+            background: var(--main-bg);
+            min-height: 100vh;
+            left: 260px;
+            width: calc(100% - 260px);
+            transition: all 0.4s ease;
+            padding: 0; /* Let the content inside handle padding */
+        }
+
+        .sidebar.close ~ .home-section {
+            left: 78px;
+            width: calc(100% - 78px);
+        }
+
+        /* Tailwind styles for elements inside main content */
+        .primary-btn {
+            @apply bg-[var(--accent-green)] text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition-all duration-300 transform hover:-translate-y-0.5;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+       
+        <div class="logo-details"> 
+             
+            <a href="home.html"> <img src="images/mit.png"   class="logo-img"> </a>
+            <span class="logo_name"></span>
+            <i class="fa-solid fa-bars" id="btn"></i>   
+        </div>
+    
+        <ul class="nav-links">
+            <li>
+                <a href="home.html" class="active">
+                    <i class="fa-solid fa-home"></i>
+                    <span class="link_name">Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="requist.html">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span class="link_name">My Requests</span>
+                </a>
+            </li>
+            <li>
+                <a href="notification.html">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="link_name">Notifications</span>
+                </a>
+            </li>
+            <li>
+                <a href="mydetails.html">
+                    <i class="fa-solid fa-user-circle"></i>
+                    <span class="link_name">My Details</span>
+                </a>
+            </li>
+        </ul>
+        <div class="profile-details">
+            <img src="https://placehold.co/80x80/EBF4FF/003366?text=K" alt="profile">
+            <div class="name-job">
+                <div class="profile_name">Kunal</div>
+                <div class="job">Student</div>
+            </div>
+        <a href="index.html" class="flex items-center">
+    <i class="fa-solid fa-right-to-bracket" id="log_out"></i>
+</a>
+        </div>
+      
+    </div>
+
+    <section class="home-section">
+        <div class="flex-1 flex flex-col overflow-hidden h-screen">
+             <header class="bg-white shadow-sm flex-shrink-0">
+                <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-gray-800" style="font-family: 'Inter', sans-serif;"> Home</h1>
+                    <div class="flex items-center gap-4">
+                        <span class="font-semibold hidden sm:block" style="font-family: 'Inter', sans-serif;"> </span>
+                        <img src="https://placehold.co/40x40/EBF4FF/003366?text=K" class="w-10 h-10 rounded-full" alt="User Avatar">
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[--main-bg] p-6" style="font-family: 'Inter', sans-serif;">
+                <div class="container mx-auto">
+                    <div class="bg-white rounded-2xl shadow-lg p-8 mb-8" style="background-image: linear-gradient(90deg, #ffffff 0%, #f0f5ff 100%);">
+                        <h2 class="text-3xl font-extrabold text-blue-900">How can we help you today?</h2>
+                        <p class="text-gray-500 mt-2">Find the right service for any issue on campus.</p>
+                        <div class="mt-6 max-w-lg relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" id="service-search-input" placeholder="Search for a service like 'Cleaning'..." class="w-full pl-12 pr-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition">
+                        </div>
+                    </div>
+
+                    <div id="services-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <a href="cleaning.html">
+                        <div class="service-card-wrapper">
+                            <div class="bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                <div class="p-5 flex items-center gap-4 border-b">
+                                    <div class="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center"><img src="images/clean.png" class="rounded-lg"/></div>
+                                    <div>
+                                        <h3 class="font-bold text-lg">Cleaning</h3>
+                                        <p class="text-sm text-gray-500">For classrooms & labs</p>
+                                    </div>
+                                </div>
+                                <div class="p-5 bg-gray-50 text-right">
+                                    <button class="primary-btn">Select</button>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                        <a href="repairing.html">
+                        <div class="service-card-wrapper">
+                            <div class="bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                <div class="p-5 flex items-center gap-4 border-b">
+                                    <div class="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center"><img src="images/repairing.png" class="rounded-lg"/></div>
+                                    <div>
+                                        <h3 class="font-bold text-lg">Repairing</h3>
+                                        <p class="text-sm text-gray-500">Furniture & fixtures</p>
+                                    </div>
+                                </div>
+                                <div class="p-5 bg-gray-50 text-right">
+                                    <button class="primary-btn">Select</button>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+
+                        <a href="electrician.html">
+                        <div class="service-card-wrapper">
+                           <div class="bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                <div class="p-5 flex items-center gap-4 border-b">
+                                    <div class="w-14 h-14 rounded-xl bg-yellow-100 flex items-center justify-center"><img src="images/ele.png" class="rounded-lg"/></div>
+                                    <div>
+                                        <h3 class="font-bold text-lg">Electrician</h3>
+                                        <p class="text-sm text-gray-500">Wiring & power issues</p>
+                                    </div>
+                                </div>
+                                <div class="p-5 bg-gray-50 text-right">
+                                    <button class="primary-btn">Select</button>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+
+                        <a href="Library.html">
+                         <div class="service-card-wrapper">
+                           <div class="bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                <div class="p-5 flex items-center gap-4 border-b">
+                                    <div class="w-14 h-14 rounded-xl bg-indigo-100 flex items-center justify-center"><img src="images/library.png" class="rounded-lg"/></div>
+                                    <div>
+                                        <h3 class="font-bold text-lg">Library</h3>
+                                        <p class="text-sm text-gray-500">Book & IT support</p>
+                                    </div>
+                                </div>
+                                <div class="p-5 bg-gray-50 text-right">
+                                    <button class="primary-btn">Select</button>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+
+                        <a href="Gardening.html">
+                         <div class="service-card-wrapper">
+                           <div class="bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                <div class="p-5 flex items-center gap-4 border-b">
+                                    <div class="w-14 h-14 rounded-xl bg-lime-100 flex items-center justify-center"><img src="images/garden.png" class="rounded-lg"/></div>
+                                    <div>
+                                        <h3 class="font-bold text-lg">Gardening</h3>
+                                        <p class="text-sm text-gray-500">Campus groundskeeping</p>
+                                    </div>
+                                </div>
+                                <div class="p-5 bg-gray-50 text-right">
+                                    <button class="primary-btn">Select</button>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+
+                        <a href="security.html">
+                         <div class="service-card-wrapper">
+                           <div class="bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                <div class="p-5 flex items-center gap-4 border-b">
+                                    <div class="w-14 h-14 rounded-xl bg-gray-200 flex items-center justify-center"><img src="images/security.png" class="rounded-lg"/></div>
+                                    <div>
+                                        <h3 class="font-bold text-lg">Security</h3>
+                                        <p class="text-sm text-gray-500">Access & safety</p>
+                                    </div>
+                                </div>
+                                <div class="p-5 bg-gray-50 text-right">
+                                    <button class="primary-btn">Select</button>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+
+                        <a href="water.html">
+                         <div class="service-card-wrapper">
+                           <div class="bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                <div class="p-5 flex items-center gap-4 border-b">
+                                    <div class="w-14 h-14 rounded-xl bg-cyan-100 flex items-center justify-center"><img src="images/plumbing.png" class="rounded-lg"/></div>
+                                    <div>
+                                        <h3 class="font-bold text-lg">Water</h3>
+                                        <p class="text-sm text-gray-500">Coolers & plumbing</p>
+                                    </div>
+                                </div>
+                                <div class="p-5 bg-gray-50 text-right">
+                                    <button class="primary-btn">Select</button>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+
+                    </div>
+                    
+                    <div id="no-results-message" class="py-16 hidden" style="font-family: 'Inter', sans-serif;">
+                        <div class="text-center mb-6">
+                            <i class="fas fa-search text-5xl text-gray-400 mb-4 inline-block"></i>
+                            <h3 class="text-2xl font-bold text-gray-700">No specific service found</h3>
+                            <p class="text-gray-500 mt-2">We couldn't find a service for that. You can select our "Miscellaneous" category for any other issue.</p>
+                        </div>
+                        <a href="more.html">
+                        <div class="service-card-wrapper" style="max-width: 320px;">
+                               <div class="bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                <div class="p-5 flex items-center gap-4 border-b">
+                                    <div class="w-14 h-14 rounded-xl bg-red-100 flex items-center justify-center"><img src="images/more.png" class="rounded-lg"/></div>
+                                    <div>
+                                        <h3 class="font-bold text-lg">Miscellaneous</h3>
+                                        <p class="text-sm text-gray-500">For other issues</p>
+                                    </div>
+                                </div>
+                                <div class="p-5 bg-gray-50 text-right">
+                                    <button class="primary-btn">Select</button>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <script>
+        let btn = document.querySelector("#btn");
+        let sidebar = document.querySelector(".sidebar");
+
+        btn.onclick = function () {
+            sidebar.classList.toggle("close");
+        }
+
+        const searchInput = document.getElementById('service-search-input');
+        const serviceCardWrappers = document.querySelectorAll('#services-grid .service-card-wrapper');
+        const noResultsMessage = document.getElementById('no-results-message');
+        const servicesGrid = document.getElementById('services-grid');
+        
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            if (searchTerm === '') {
+                serviceCardWrappers.forEach(wrapper => {
+                    wrapper.style.display = 'block';
+                });
+                servicesGrid.style.display = 'grid';
+                noResultsMessage.classList.add('hidden');
+                return;
+            }
+
+            serviceCardWrappers.forEach(wrapper => {
+                const serviceName = wrapper.querySelector('h3').textContent.toLowerCase();
+                if (serviceName.includes(searchTerm)) {
+                    wrapper.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    wrapper.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                servicesGrid.style.display = 'none';
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                servicesGrid.style.display = 'grid';
+                noResultsMessage.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

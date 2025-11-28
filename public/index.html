@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIT CampusCare - Unified Login</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .primary-btn {
+            @apply bg-blue-800 text-white font-bold py-3 px-5 rounded-xl shadow-lg hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 transform hover:-translate-y-1 disabled:bg-gray-400 disabled:cursor-not-allowed;
+        }
+        .secondary-btn {
+            @apply bg-white text-blue-800 font-bold py-3 px-5 rounded-xl shadow-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 transform hover:-translate-y-1 border-2 border-blue-800;
+        }
+        .form-panel-bg {
+             background-color: #ffffff;
+             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg fill='%23eef2ff'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        .form-input {
+             @apply w-full px-4 py-3 bg-gray-50 border-2 border-gray-300 rounded-lg focus:outline-none focus:bg-white transition-all duration-300 transform focus:scale-[1.03] focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:shadow-lg;
+        }
+        
+        .form-container {
+            transition: all 0.5s ease-in-out;
+            background-color: white; 
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <main>
+        <div class="min-h-screen flex items-center justify-center p-4">
+            <div class="w-full max-w-5xl bg-white shadow-2xl rounded-3xl overflow-hidden grid md:grid-cols-2 min-h-[50rem] relative">
+                
+                <div class="hidden md:flex bg-blue-900 p-12 flex-col justify-between z-30 relative">
+                    <div>
+                        <img src="images/mit.png" alt="MIT College Logo" class="h-12 mb-4">
+                        <h1 class="text-white text-3xl font-bold leading-tight">Your Campus, Your Voice.</h1>
+                        <p class="text-blue-200 mt-2">Keeping our campus clean and safe, together.</p>
+                    </div>
+                    <div class="flex-grow flex items-center justify-center">
+                        <img src="images/login.png" alt="Login Icon" class="h-[450px] w-auto object-contain">
+                    </div>
+                    <p class="text-blue-300 text-sm text-center mt-6">© 2025 MIT College. All rights reserved.</p>
+                </div>
+
+                <div id="right-panel" class="p-12 flex flex-col form-panel-bg relative overflow-hidden">
+                    
+                    <div class="md:hidden flex justify-center mb-6">
+                        <img src="images/mit.png" alt="MIT College Logo" class="h-11">
+                    </div>
+
+                    <div class="flex-grow flex flex-col justify-center relative">
+                        
+                        <div id="main-toggle-container" class="flex justify-center mb-8 transition-all duration-500 z-50 relative">
+                            <label for="role-toggle" class="relative w-28 h-12 cursor-pointer">
+                                <input type="checkbox" id="role-toggle" class="sr-only peer">
+                                <div class="w-full h-full bg-gray-200 peer-checked:bg-blue-800 rounded-full transition-colors duration-300"></div>
+                                <div id="toggle-thumb" class="absolute top-1 left-1 bg-white w-10 h-10 rounded-full shadow-md transform peer-checked:translate-x-16 transition-transform duration-300 flex items-center justify-center">
+                                    <i id="student-icon" class="fas fa-user-graduate text-blue-800 absolute transition-opacity duration-300 opacity-100"></i>
+                                    <i id="admin-icon" class="fas fa-user-shield text-blue-800 absolute transition-opacity duration-300 opacity-0"></i>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="relative w-full min-h-[420px]">
+                            
+                            <div id="student-form" class="form-container absolute top-0 left-0 w-full h-full opacity-100 z-20 bg-white">
+                                <h2 class="text-3xl font-bold text-gray-800 mb-2 text-center">User Login</h2>
+                                <p class="text-gray-500 mb-8 text-center">Please enter your credentials to proceed.</p>
+                                <form class="space-y-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-600 mb-2">College Email</label>
+                                        <input type="email" id="student-email" class="form-input" placeholder="e.g., kunal.bulbule@mit.asia">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-600 mb-2">Password</label>
+                                        <input type="password" id="student-password" class="form-input" placeholder="••••••••">
+                                    </div>
+                                    <button type="button" id="student-login-btn" class="w-full primary-btn">Secure Login</button>
+                                </form>
+                                <div class="my-6 flex items-center">
+                                    <hr class="flex-grow border-gray-300">
+                                    <span class="mx-4 text-gray-500 font-semibold">OR</span>
+                                    <hr class="flex-grow border-gray-300">
+                                </div>
+                                <a href="https://erp.mit.asia/login.htm" target="_blank" class="block">
+                                    <button type="button" class="w-full secondary-btn">Login with ERP</button>
+                                </a>
+                            </div>
+
+                            <div id="admin-form" class="form-container absolute top-0 left-0 w-full h-full opacity-0 pointer-events-none translate-x-10 z-10 bg-white">
+                                <h2 class="text-3xl font-bold text-gray-800 mb-2 text-center">Admin Login</h2>
+                                <p class="text-gray-500 mb-8 text-center">Administrative access only.</p>
+                                <form class="space-y-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-600 mb-2">Admin Email</label>
+                                        <input type="email" id="admin-email" class="form-input" placeholder="e.g., admin@mit.asia">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-600 mb-2">Password</label>
+                                        <input type="password" id="admin-password" class="form-input" placeholder="••••••••">
+                                    </div>
+                                    <button type="button" id="admin-login-btn" class="w-full primary-btn">Admin Dashboard</button>
+                                </form>
+                            </div>
+
+                            <div id="staff-form" class="form-container absolute top-0 left-0 w-full h-full opacity-0 pointer-events-none translate-y-20 z-10 bg-white flex flex-col justify-center -mt-12">
+                                <div class="flex justify-center mb-4">
+                                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-broom text-orange-600 text-2xl"></i>
+                                    </div>
+                                </div>
+                                <h2 class="text-3xl font-bold text-gray-800 mb-2 text-center">Staff Login</h2>
+                                <p class="text-gray-500 mb-8 text-center">Housekeeping & Maintenance</p>
+                                <form class="space-y-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-600 mb-2">Staff ID</label>
+                                        <input type="text" id="staff-id" class="form-input" placeholder="e.g., STF-2025">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-600 mb-2">Passcode</label>
+                                        <input type="password" id="staff-password" class="form-input" placeholder="••••">
+                                    </div>
+                                    <button type="button" id="staff-login-btn" class="w-full bg-orange-600 text-white font-bold py-3 px-5 rounded-xl shadow-lg hover:bg-orange-700 transition-all duration-300">Staff Access</button>
+                                </form>
+                                <button id="back-to-main" class="mt-8 w-full text-sm text-gray-500 hover:text-blue-800 font-medium flex items-center justify-center gap-2 transition-colors">
+                                    <i class="fas fa-arrow-left"></i> Back to General Login
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div id="staff-trigger-container" class="absolute bottom-6 right-6 z-50">
+                        <button id="staff-toggle-btn" class="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-300 text-gray-600 hover:text-orange-600 group">
+                            <span class="text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 -translate-x-2 group-hover:translate-x-0">Staff Login</span>
+                            <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-orange-50 transition-colors">
+                                <i class="fas fa-user-cog text-sm"></i>
+                            </div>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+<script>
+    // ---------- DOM Elements ----------
+    const roleToggle = document.getElementById('role-toggle');
+    const toggleContainer = document.getElementById('main-toggle-container');
+    const staffTriggerContainer = document.getElementById('staff-trigger-container');
+    
+    const studentForm = document.getElementById('student-form');
+    const adminForm = document.getElementById('admin-form');
+    const staffForm = document.getElementById('staff-form');
+    
+    const studentIcon = document.getElementById('student-icon');
+    const adminIcon = document.getElementById('admin-icon');
+    
+    const staffToggleBtn = document.getElementById('staff-toggle-btn');
+    const backToMainBtn = document.getElementById('back-to-main');
+
+    const studentLoginBtn = document.getElementById('student-login-btn');
+    const adminLoginBtn = document.getElementById('admin-login-btn');
+    const staffLoginBtn = document.getElementById('staff-login-btn');
+
+    // ---------- UI Logic: Switch Form Visibility ----------
+    function showForm(formToShow) {
+        const forms = [studentForm, adminForm, staffForm];
+        forms.forEach(f => {
+            if(f === formToShow) {
+                f.classList.remove('opacity-0', 'pointer-events-none', 'translate-x-10', 'translate-y-20', 'z-10');
+                f.classList.add('opacity-100', 'pointer-events-auto', 'z-20');
+            } else {
+                f.classList.remove('opacity-100', 'pointer-events-auto', 'z-20');
+                f.classList.add('opacity-0', 'pointer-events-none', 'z-10');
+                if(f === staffForm) f.classList.add('translate-y-20');
+                else f.classList.add('translate-x-10');
+            }
+        });
+    }
+
+    roleToggle.addEventListener('change', () => {
+        if (!staffForm.classList.contains('opacity-0')) return;
+        if (roleToggle.checked) {
+            showForm(adminForm);
+            studentIcon.classList.replace('opacity-100', 'opacity-0');
+            adminIcon.classList.replace('opacity-0', 'opacity-100');
+        } else {
+            showForm(studentForm);
+            adminIcon.classList.replace('opacity-100', 'opacity-0');
+            studentIcon.classList.replace('opacity-0', 'opacity-100');
+        }
+    });
+
+    staffToggleBtn.addEventListener('click', () => {
+        toggleContainer.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+        staffTriggerContainer.classList.add('opacity-0', 'pointer-events-none');
+        showForm(staffForm);
+    });
+
+    backToMainBtn.addEventListener('click', () => {
+        toggleContainer.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+        staffTriggerContainer.classList.remove('opacity-0', 'pointer-events-none');
+        if (roleToggle.checked) showForm(adminForm);
+        else showForm(studentForm);
+    });
+
+    // ---------- API AUTHENTICATION LOGIC ----------
+    
+    // Helper Function for API calls
+    async function handleAuth(url, payload, btn, redirectUrl) {
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Authenticating...';
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Success
+                // You might want to store the token here: localStorage.setItem('token', data.token);
+                window.location.href = redirectUrl;
+            } else {
+                // Failed (401, 400, etc.)
+                alert(data.message || "Login failed. Please check credentials.");
+            }
+        } catch (error) {
+            console.error("Connection Error:", error);
+            alert("Unable to connect to server. Please try again later.");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
+
+    // 1. Student Login
+    studentLoginBtn.addEventListener('click', async () => {
+        const email = document.getElementById('student-email').value.trim();
+        const password = document.getElementById('student-password').value.trim();
+
+        if (!email || !password) {
+            alert("Please enter both email and password.");
+            return;
+        }
+
+        // Call your Backend API
+        await handleAuth('http://localhost:5000/api/login', { email, password }, studentLoginBtn, 'home.html');
+    });
+
+    // 2. Admin Login
+    adminLoginBtn.addEventListener('click', async () => {
+        const email = document.getElementById('admin-email').value.trim();
+        const password = document.getElementById('admin-password').value.trim();
+
+        if (!email || !password) {
+            alert("Please enter admin credentials.");
+            return;
+        }
+
+        // Call Admin API
+        await handleAuth('http://localhost:5000/api/admin/login', { email, password }, adminLoginBtn, 'admin.html');
+    });
+
+    // 3. Staff Login
+    staffLoginBtn.addEventListener('click', async () => {
+        const staffId = document.getElementById('staff-id').value.trim();
+        const password = document.getElementById('staff-password').value.trim();
+
+        if (!staffId || !password) {
+            alert("Please enter Staff ID and Passcode.");
+            return;
+        }
+
+        // Call Staff API (Assuming this endpoint exists or you will create it)
+        await handleAuth('http://localhost:5000/api/staff/login', { staffId, password }, staffLoginBtn, 'sttaf.html');
+    });
+
+</script>
+
+</body>
+</html>

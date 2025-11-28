@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusCare Dashboard - MIT</title>
+    <!-- Tailwind CSS for main content -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        :root {
+             --main-bg: #f7f9fc;
+             --accent-green: #1ABB9C;
+             --sidebar-blue: #1e3a8a;
+        }
+
+        body {
+            background: var(--main-bg);
+            min-height: 100vh;
+        }
+
+        /* Sidebar Code Provided by User */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 260px;
+            background: var(--sidebar-blue);
+            padding: 10px 14px;
+            transition: all 0.4s ease;
+            z-index: 100;
+        }
+
+        .sidebar.close {
+            width: 78px;
+        }
+
+        .sidebar .logo-details {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            position: relative;
+        }
+
+        .sidebar .logo-details .logo-img {
+            height: 40px;
+            width: auto;
+            min-width: initial;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .logo-details .logo_name {
+            font-size: 22px;
+            color: #fff;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 1;
+            transition: 0.3s;
+        }
+        .sidebar.close .logo-details .logo_name,
+        .sidebar.close .logo-details .logo-img {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .sidebar .logo-details #btn {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 22px;
+            cursor: pointer;
+            color: #fff;
+            text-align: center;
+            width: 50px;
+        }
+        
+       .sidebar.close .logo-details #btn {
+            position: absolute;
+            top: 50%;
+            right: 50%;
+            transform: translate(50%, -50%);
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .sidebar .nav-links {
+            margin-top: 20px;
+            height: calc(100% - 160px);
+            padding: 0;
+            overflow: auto;
+        }
+        
+        .sidebar .nav-links::-webkit-scrollbar {
+            display: none;
+        }
+
+        .sidebar .nav-links li {
+            list-style: none;
+            position: relative;
+            margin: 8px 0;
+        }
+
+        .sidebar .nav-links li a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #E0E0E0;
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-links li a:hover {
+            background: #ffffff1a;
+            color: #fff;
+        }
+
+        .sidebar .nav-links li a.active {
+            background: #fff;
+            color: #11101D;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-links li i {
+            min-width: 50px;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .sidebar .nav-links li .link_name {
+            white-space: nowrap;
+        }
+
+        .sidebar.close .nav-links li .link_name {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+
+        .sidebar .profile-details {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 260px;
+            background: #1d1b31;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            transition: all 0.4s ease;
+        }
+
+        .sidebar.close .profile-details {
+            width: 78px;
+            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar .profile-details img {
+            height: 48px;
+            width: 48px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        
+        .sidebar.close .profile-details img {
+            margin-right: 0;
+        }
+
+        .sidebar .profile-details .profile_name,
+        .sidebar .profile-details .job {
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .sidebar .profile-details .profile_name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .sidebar .profile-details .job {
+            font-size: 12px;
+        }
+
+        .sidebar.close .profile-details .profile_name,
+        .sidebar.close .profile-details .job,
+        .sidebar.close .profile-details #log_out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .sidebar .profile-details #log_out {
+            position: absolute;
+            right: 0;
+            width: 50px;
+            text-align: center;
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+        }
+        
+        .home-section {
+            position: relative;
+            background: var(--main-bg);
+            min-height: 100vh;
+            left: 260px;
+            width: calc(100% - 260px);
+            transition: all 0.4s ease;
+            padding: 0;
+        }
+
+        .sidebar.close ~ .home-section {
+            left: 78px;
+            width: calc(100% - 78px);
+        }
+        
+        .details-input {
+            @apply w-full p-2.5 mt-1 bg-gray-100 border border-gray-200 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500;
+        }
+        .info-label {
+            @apply text-xs text-gray-500;
+        }
+        .info-value {
+            @apply text-sm font-semibold text-gray-800;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-details"> 
+             
+            <a href="home.html"> <img src="images/mit.png"   class="logo-img"> </a>
+            <span class="logo_name"></span>
+            <i class="fa-solid fa-bars" id="btn"></i>   
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="home.html">
+                    <i class="fa-solid fa-home"></i>
+                    <span class="link_name">Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="requist.html">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span class="link_name">My Requests</span>
+                </a>
+            </li>
+            <li>
+                <a href="notification.html">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="link_name">Notifications</span>
+                </a>
+            </li>
+            <li>
+                <a href="mydetails.html" class="active">
+                    <i class="fa-solid fa-user-circle"></i>
+                    <span class="link_name">My Details</span>
+                </a>
+            </li>
+        </ul>
+        <div class="profile-details">
+            <img src="https://placehold.co/80x80/EBF4FF/003366?text=K" alt="profile">
+            <div class="name-job">
+                <div class="profile_name">Kunal</div>
+                <div class="job">Student</div>
+            </div>
+            <a href="index.html" class="flex items-center">
+    <i class="fa-solid fa-right-to-bracket" id="log_out"></i>
+</a>
+        </div>
+    </div>
+
+    <section class="home-section">
+        <div class="flex-1 flex flex-col overflow-hidden h-screen">
+             <header class="bg-white shadow-sm flex-shrink-0">
+                <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                    <h1 id="page-title" class="text-2xl font-bold text-gray-800" style="font-family: 'Inter', sans-serif;">My Details</h1>
+                    <div class="flex items-center gap-4">
+                        <span class="font-semibold hidden sm:block" style="font-family: 'Inter', sans-serif;"> </span>
+                        <img src="https://placehold.co/40x40/EBF4FF/003366?text=K" class="w-10 h-10 rounded-full" alt="User Avatar">
+                    </div>
+                </div>
+            </header>
+
+            <!-- MY DETAILS PAGE -->
+            <main id="my-details-page" class="flex-1 overflow-x-hidden overflow-y-auto bg-[--main-bg] p-6" style="font-family: 'Inter', sans-serif;">
+                <div class="container mx-auto">
+                    <div class="flex justify-between items-center mb-6">
+                        <h1 class="text-3xl font-bold text-gray-800">My Profile</h1>
+                        <button id="edit-details-btn" class="bg-blue-800 text-white font-semibold py-2 px-5 rounded-lg hover:bg-blue-900 text-sm flex items-center gap-2">
+                           <i class="fas fa-pencil-alt"></i> Edit Details
+                        </button>
+                    </div>
+
+                    <div id="details-view">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <!-- Left Column: Profile Card -->
+                            <div class="lg:col-span-1">
+                                <div class="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+                                     <img src="https://placehold.co/128x128/EBF4FF/1e3a8a?text=K" class="w-32 h-32 rounded-full mx-auto ring-4 ring-blue-100">
+                                    <div class="text-center border-b pb-4">
+                                         <h2 class="text-2xl font-bold text-gray-800">Kunal</h2>
+                                         <p class="text-sm text-gray-500">Student</p>
+                                    </div>
+                                    <div class="space-y-3 text-sm">
+                                        <div class="flex items-center gap-3">
+                                            <i class="fas fa-envelope text-gray-400 w-5 text-center"></i>
+                                            <span class="text-gray-600">kunal.student@mit.edu</span>
+                                        </div>
+                                         <div class="flex items-center gap-3">
+                                            <i class="fas fa-phone text-gray-400 w-5 text-center"></i>
+                                            <span class="text-gray-600">+91 98765 43210</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Right Column: Info Cards -->
+                            <div class="lg:col-span-2 space-y-8">
+                                <!-- Academic Info Card -->
+                                <div class="bg-white rounded-2xl shadow-lg p-6">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i class="fas fa-graduation-cap text-blue-800"></i>
+                                        <h3 class="text-lg font-bold text-gray-800">Academic Information</h3>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                                        <div><p class="info-label">Student ID</p><p class="info-value">MIT-2025-001</p></div>
+                                        <div><p class="info-label">Course</p><p class="info-value">Computer Science</p></div>
+                                        <div><p class="info-label">Department</p><p class="info-value">School of Engineering</p></div>
+                                        <div><p class="info-label">Batch</p><p class="info-value">2022 - 2026</p></div>
+                                    </div>
+                                </div>
+                                 <!-- Emergency Contact Card -->
+                                <div class="bg-white rounded-2xl shadow-lg p-6">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i class="fas fa-phone-alt text-blue-800"></i>
+                                        <h3 class="text-lg font-bold text-gray-800">Emergency Contact</h3>
+                                    </div>
+                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                                        <div><p class="info-label">Contact Name</p><p class="info-value">Suresh Kumar</p></div>
+                                        <div><p class="info-label">Relationship</p><p class="info-value">Father</p></div>
+                                        <div><p class="info-label">Contact Number</p><p class="info-value">+91 98765 11223</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit Form (Hidden by default) -->
+                     <div id="details-edit" class="hidden">
+                         <form class="bg-white rounded-2xl shadow-lg p-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6">Edit Personal Information</h3>
+                            <div class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div><label class="block text-sm font-medium text-gray-600">Full Name</label><input type="text" value="Kunal" class="details-input"></div>
+                                    <div><label class="block text-sm font-medium text-gray-600">Phone Number</label><input type="tel" value="+91 98765 43210" class="details-input"></div>
+                                </div>
+                                <div><label class="block text-sm font-medium text-gray-600">Email Address</label><input type="email" value="kunal.student@mit.edu" class="details-input"></div>
+                                <hr>
+                                <h3 class="text-lg font-bold text-gray-800 pt-2">Emergency Contact</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                     <div><label class="block text-sm font-medium text-gray-600">Contact Name</label><input type="text" value="Suresh Kumar" class="details-input"></div>
+                                     <div><label class="block text-sm font-medium text-gray-600">Relationship</label><input type="text" value="Father" class="details-input"></div>
+                                     <div><label class="block text-sm font-medium text-gray-600">Contact Number</label><input type="tel" value="+91 98765 11223" class="details-input"></div>
+                                </div>
+                                <div id="form-buttons" class="pt-4 text-right space-x-2">
+                                     <button type="button" id="cancel-btn" class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300">Cancel</button>
+                                     <button type="button" id="save-btn" class="bg-blue-800 text-white font-semibold py-2 px-5 rounded-lg hover:bg-blue-900">Save Changes</button>
+                                </div>
+                            </div>
+                         </form>
+                     </div>
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <script>
+        // Sidebar toggle
+        let btn = document.querySelector("#btn");
+        let sidebar = document.querySelector(".sidebar");
+        btn.onclick = function () {
+            sidebar.classList.toggle("close");
+        }
+
+        // My Details Page Edit Functionality
+        const editBtn = document.getElementById('edit-details-btn');
+        const viewSection = document.getElementById('details-view');
+        const editSection = document.getElementById('details-edit');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const saveBtn = document.getElementById('save-btn');
+        
+        editBtn.addEventListener('click', () => {
+            viewSection.classList.add('hidden');
+            editSection.classList.remove('hidden');
+            editBtn.classList.add('hidden');
+        });
+
+        function endEditing() {
+            editSection.classList.add('hidden');
+            viewSection.classList.remove('hidden');
+            editBtn.classList.remove('hidden');
+        }
+
+        cancelBtn.addEventListener('click', endEditing);
+        saveBtn.addEventListener('click', endEditing);
+
+        // This is a placeholder for actual page navigation logic if you merge files
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', e => {
+                 // For this standalone page, we prevent navigation
+                e.preventDefault(); 
+            });
+        });
+    </script>
+</body>
+</html>
+

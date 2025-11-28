@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Service Request - CampusCare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        :root {
+            --main-bg: #f7f9fc;
+        }
+
+        body {
+            background: var(--main-bg);
+            min-height: 100vh;
+        }
+        
+        /* --- PROFESSIONAL UI ENHANCEMENTS --- */
+        .form-input:focus {
+            @apply ring-2 ring-blue-300 border-blue-500 shadow-sm;
+        }
+        .transition-smooth {
+            @apply transition-all duration-300 ease-in-out;
+        }
+        
+        /* --- Unified Selector Styles --- */
+        .search-item {
+            @apply flex items-center p-3 rounded-lg border-2 border-transparent cursor-pointer transition-all duration-200;
+        }
+        .search-item.highlight, .search-item:hover {
+            @apply bg-blue-100 text-blue-800 font-semibold ring-2 ring-blue-200;
+            transform: translateX(4px);
+        }
+        .search-item.selected {
+            @apply bg-blue-200 border-blue-600 font-semibold text-blue-900 shadow-lg;
+            transform: scale(1.02);
+        }
+
+        /* --- Sidebar Styles --- */
+        .sidebar {
+            position: fixed; left: 0; top: 0; height: 100%; width: 260px;
+            background: #1e3a8a; padding: 10px 14px;
+            transition: all 0.4s ease; z-index: 100;
+        }
+        .sidebar.close { width: 78px; }
+        .sidebar .logo-details {
+            display: flex; align-items: center; height: 60px; position: relative;
+        }
+        .sidebar .logo-details .logo-img {
+            height: 40px; width: auto; min-width: initial; transition: all 0.3s ease;
+        }
+        .sidebar .logo-details .logo_name {
+            font-size: 22px; color: #fff; font-weight: 600; white-space: nowrap;
+            opacity: 1; transition: 0.3s;
+        }
+        .sidebar.close .logo-details .logo_name,
+        .sidebar.close .logo-details .logo-img { opacity: 0; pointer-events: none; }
+        .sidebar .logo-details #btn {
+            position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+            font-size: 22px; cursor: pointer; color: #fff; text-align: center; width: 50px;
+        }
+        .sidebar.close .logo-details #btn { right: 50%; transform: translate(50%, -50%); }
+        .sidebar .nav-links {
+            margin-top: 20px; height: calc(100% - 160px); padding: 0; overflow: auto;
+        }
+        .sidebar .nav-links::-webkit-scrollbar { display: none; }
+        .sidebar .nav-links li { list-style: none; position: relative; margin: 8px 0; }
+        .sidebar .nav-links li a {
+            display: flex; align-items: center; text-decoration: none;
+            color: #E0E0E0; border-radius: 12px; padding: 12px;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-links li a:hover { background: #ffffff1a; color: #fff; }
+        .sidebar .nav-links li a.active { background: #fff; color: #11101D; font-weight: 500; }
+        .sidebar .nav-links li i { min-width: 50px; text-align: center; font-size: 18px; }
+        .sidebar .nav-links li .link_name { white-space: nowrap; }
+        .sidebar.close .nav-links li .link_name { opacity: 0; pointer-events: none; }
+        .sidebar .profile-details {
+            position: absolute; bottom: 0; left: 0; width: 260px; background: #1d1b31;
+            padding: 12px; display: flex; align-items: center; transition: all 0.4s ease;
+        }
+        .sidebar.close .profile-details { width: 78px; background: none; justify-content: center; }
+        .sidebar .profile-details img {
+            height: 48px; width: 48px; object-fit: cover;
+            border-radius: 12px; margin-right: 10px; flex-shrink: 0;
+        }
+        .sidebar.close .profile-details img { margin-right: 0; }
+        .sidebar .profile-details .profile_name,
+        .sidebar .profile-details .job { color: #fff; white-space: nowrap; }
+        .sidebar .profile-details .profile_name { font-size: 16px; font-weight: 500; }
+        .sidebar .profile-details .job { font-size: 12px; }
+        .sidebar.close .profile-details .profile_name,
+        .sidebar.close .profile-details .job,
+        .sidebar.close .profile-details #log_out { opacity: 0; pointer-events: none; }
+        .sidebar .profile-details #log_out {
+            position: absolute; right: 0; width: 50px; text-align: center;
+            color: #fff; font-size: 22px; cursor: pointer;
+        }
+
+        /* --- Home Section Layout --- */
+        .home-section {
+            position: relative; background: var(--main-bg); min-height: 100vh;
+            left: 260px; width: calc(100% - 260px);
+            transition: all 0.4s ease; padding: 0;
+        }
+        .sidebar.close ~ .home-section { left: 78px; width: calc(100% - 78px); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+         <div class="logo-details"> 
+            <a href="home.html"> <img src="images/mit.png"   class="logo-img"> </a>
+            <span class="logo_name"></span>
+            <i class="fa-solid fa-bars" id="btn"></i>   
+        </div>
+        <ul class="nav-links">
+            <li><a href="home.html"><i class="fa-solid fa-home"></i><span class="link_name">Home</span></a></li>
+            <li><a href="requist.html"><i class="fa-solid fa-clipboard-list"></i><span class="link_name">My Requests</span></a></li>
+            <li><a href="notification.html"><i class="fa-solid fa-bell"></i><span class="link_name">Notifications</span></a></li>
+            <li><a href="mydetails.html"><i class="fa-solid fa-user-circle"></i><span class="link_name">My Details</span></a></li>
+        </ul>
+        <div class="profile-details">
+            <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" id="user-avatar" alt="profile">
+            <div class="name-job"><div class="profile_name" id="sidebar-name">Loading...</div><div class="job">Student</div></div>
+            <a href="#" onclick="logout()" class="flex items-center">
+                <i class="fa-solid fa-right-to-bracket" id="log_out"></i>
+            </a>
+        </div>
+    </div>
+
+    <section class="home-section">
+        <div class="flex-1 flex flex-col overflow-hidden h-screen">
+            <header class="bg-white shadow-sm flex-shrink-0">
+                <div class="px-6 py-4 flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-gray-800">Report an Issue</h1>
+                    <div class="flex items-center gap-4">
+                        <img src="https://placehold.co/40x40/EBF4FF/003366?text=K" class="w-10 h-10 rounded-full" alt="User Avatar">
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto bg-[--main-bg] p-6">
+                
+                <div id="form-container" class="bg-white p-8 rounded-2xl shadow-lg transition-smooth opacity-100">
+                    <div class="flex items-center gap-4 mb-6 pb-6 border-b">
+                        <div class="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                            <img src="images/plumbing.png" alt="">
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-800">Water Service Request</h1>
+                            <p class="text-gray-500">Please select the type of issue and provide the location details.</p>
+                        </div>
+                    </div>
+                    
+                    <form id="water-form" class="space-y-8">
+                        
+                        <div>
+                            <label class="block text-lg font-semibold text-gray-700 mb-4">1. Select Issue Type <span class="text-red-500">*</span></label>
+                            <div class="bg-gray-50 p-4 rounded-xl">
+                                <div class="relative">
+                                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                    <input type="search" id="water-item-search" placeholder="Search for an issue..." autocomplete="off" class="form-input w-full pl-12 pr-4 py-3 bg-white border-2 border-gray-200 rounded-xl">
+                                </div>
+                                <div id="water-item-options" class="hidden mt-4 space-y-2 max-h-64 overflow-y-auto pr-4">
+                                    <div class="search-item" data-item-name="Water Cooler Not Working"><i class="fas fa-snowflake w-6 text-center mr-3 text-gray-500"></i>Water Cooler Not Working</div>
+                                    <div class="search-item" data-item-name="Water Leakage (Tap/Pipe)"><i class="fas fa-faucet w-6 text-center mr-3 text-gray-500"></i>Water Leakage (Tap/Pipe)</div>
+                                    <div class="search-item" data-item-name="No Water Supply"><i class="fas fa-tint-slash w-6 text-center mr-3 text-gray-500"></i>No Water Supply</div>
+                                    <div class="search-item" data-item-name="Water Purifier Issue (RO)"><i class="fas fa-filter w-6 text-center mr-3 text-gray-500"></i>Water Purifier Issue (RO)</div>
+                                    <div class="search-item" data-item-name="Low Water Pressure"><i class="fas fa-tachometer-alt w-6 text-center mr-3 text-gray-500"></i>Low Water Pressure</div>
+                                    <div class="search-item" data-item-name="Dirty Water / Quality Issue"><i class="fas fa-vial w-6 text-center mr-3 text-gray-500"></i>Dirty Water / Quality Issue</div>
+                                    <div class="search-item" data-item-name="Washroom Plumbing Issue"><i class="fas fa-toilet w-6 text-center mr-3 text-gray-500"></i>Washroom Plumbing Issue</div>
+                                    <div class="search-item" data-item-name="Water Tank Cleaning Request"><i class="fas fa-hand-sparkles w-6 text-center mr-3 text-gray-500"></i>Water Tank Cleaning Request</div>
+                                    <div class="search-item other-option hidden" data-item-name="Other"><i class="fas fa-plus-circle w-6 text-center mr-3 text-gray-500"></i>Other</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-lg font-semibold text-gray-700 mb-4">2. Select Building & Specify Location <span class="text-red-500">*</span></label>
+                            <div class="bg-gray-50 p-4 rounded-xl">
+                                <div class="relative">
+                                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                    <input type="search" id="building-search" placeholder="Search building..." autocomplete="off" class="form-input w-full pl-12 pr-4 py-3 bg-white border-2 border-gray-200 rounded-xl">
+                                </div>
+                                <div id="building-options" class="hidden mt-4 space-y-2 max-h-48 overflow-y-auto pr-4">
+                                    <div class="search-item" data-building-name="Tech Building"><i class="fas fa-laptop-code w-6 text-center mr-3 text-gray-500"></i>Tech Building</div>
+                                    <div class="search-item" data-building-name="Maratha Building"><i class="fas fa-landmark w-6 text-center mr-3 text-gray-500"></i>Maratha Building</div>
+                                    <div class="search-item" data-building-name="Polytechnic Building"><i class="fas fa-drafting-compass w-6 text-center mr-3 text-gray-500"></i>Polytechnic Building</div>
+                                    <div class="search-item" data-building-name="Agriculture Building"><i class="fas fa-seedling w-6 text-center mr-3 text-gray-500"></i>Agriculture Building</div>
+                                    <div class="search-item" data-building-name="Workshop"><i class="fas fa-tools w-6 text-center mr-3 text-gray-500"></i>Workshop</div>
+                                    <div class="search-item" data-building-name="Library"><i class="fas fa-book w-6 text-center mr-3 text-gray-500"></i>Library</div>
+                                    <div class="search-item other-option hidden" data-building-name="Other"><i class="fas fa-plus-circle w-6 text-center mr-3 text-gray-500"></i>Other</div>
+                                </div>
+                            </div>
+                            <div id="location-details-container" class="hidden opacity-0 transition-smooth grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600 mb-1">Floor Number <span class="text-red-500">*</span></label>
+                                    <input type="number" id="floor-input" placeholder="e.g., 2" class="form-input w-full p-3 bg-gray-100 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600 mb-1">Area or Room <span class="text-red-500">*</span></label>
+                                    <input type="text" id="room-input" placeholder="e.g., Near Washroom or Room 204" class="form-input w-full p-3 bg-gray-100 border rounded-lg">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-lg font-semibold text-gray-700 mb-3">3. Describe the issue in detail (optional)</label>
+                            <textarea id="details-input" rows="3" class="form-input w-full p-3 bg-gray-100 border rounded-lg" placeholder="e.g., The water cooler on the 2nd floor is leaking..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-lg font-semibold text-gray-700 mb-3">4. Add a photo (optional)</label>
+                            <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                                <div class="text-center" id="image-prompt">
+                                    <i class="fas fa-camera text-4xl text-gray-300"></i>
+                                    <div class="mt-4 flex text-sm leading-6 text-gray-600">
+                                        <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-blue-800 focus-within:outline-none hover:text-blue-700">
+                                            <span>Upload a file</span>
+                                            <input id="file-upload" name="file-upload" type="file" class="sr-only" accept="image/png, image/jpeg">
+                                        </label>
+                                        <p class="pl-1">or drag and drop</p>
+                                    </div>
+                                    <p class="text-xs leading-5 text-gray-600">PNG, JPG up to 10MB</p>
+                                </div>
+                                <div id="image-preview-container" class="hidden w-full text-center relative">
+                                    <img id="image-preview" src="" alt="Image Preview" class="max-h-48 mx-auto rounded-lg shadow-md"/>
+                                    <button type="button" id="remove-image-btn" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-7 w-7 flex items-center justify-center hover:bg-red-600">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 text-right">
+                            <button type="button" id="submit-btn" class="bg-blue-800 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                Submit Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="success-container" class="hidden opacity-0 bg-white p-8 rounded-2xl shadow-lg text-center transition-smooth">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                        <i class="fas fa-check text-4xl text-green-600"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mt-6">Request Submitted!</h2>
+                    <p class="text-gray-500 mt-2">We have received your request and will process it shortly.</p>
+                    <div class="text-left bg-gray-50 rounded-xl p-6 mt-8 space-y-4 border">
+                        <div><p class="text-sm text-gray-500">Report Status</p><p class="font-semibold text-orange-600">Pending</p></div>
+                        <div><p class="text-sm text-gray-500">Service Type</p><p class="font-semibold text-gray-800">Water</p></div>
+                        <div id="success-item-container"><p class="text-sm text-gray-500">Issue Type</p><p id="success-item" class="font-semibold text-gray-800"></p></div>
+                        <div id="success-address-container"><p class="text-sm text-gray-500">Address</p><p id="success-address" class="font-semibold text-gray-800"></p></div>
+                        <div><p class="text-sm text-gray-500">Reporting Date</p><p id="success-date" class="font-semibold text-gray-800"></p></div>
+                        <div id="success-image-container" class="hidden"><p class="text-sm text-gray-500 mb-2">Attached Photo:</p><img id="success-image" src="" class="max-h-48 rounded-lg shadow-md"></div>
+                    </div>
+                      <a href="home.html">
+                    <button id="back-to-home-btn" class="mt-8 bg-blue-800 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-900 transition-all">
+                        Back to Home
+                    </button>
+                    </a>
+                </div>
+                
+            </main>
+        </div>
+    </section>
+
+    <script>
+        // --- Sidebar Toggle ---
+        document.querySelector("#btn").onclick = () => document.querySelector(".sidebar").classList.toggle("close");
+
+        // --- AUTH CHECK ---
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/user');
+                if (res.status === 401) { window.location.href = 'index.html'; return; }
+                const user = await res.json();
+                if(user.name) {
+                    document.getElementById('sidebar-name').innerText = user.name;
+                }
+            } catch (e) { console.error("Auth check failed"); }
+        }
+        checkAuth();
+
+        // --- Helper functions for smooth transitions ---
+        function showElement(el) {
+            el.classList.remove('hidden');
+            setTimeout(() => { el.classList.remove('opacity-0'); }, 20);
+        }
+
+        function hideElement(el, callback) {
+            el.classList.add('opacity-0');
+            setTimeout(() => {
+                el.classList.add('hidden');
+                if (callback) callback();
+            }, 300);
+        }
+
+        // --- Reusable Searchable Select Component Logic ---
+        function setupSearchableSelect(searchInputId, optionsContainerId, itemClassName, dataAttribute, onSelectCallback = null) {
+            const searchInput = document.getElementById(searchInputId);
+            const optionsContainer = document.getElementById(optionsContainerId);
+            const items = Array.from(optionsContainer.querySelectorAll(`.${itemClassName}`));
+            const otherOption = optionsContainer.querySelector('.other-option');
+            let highlightedIndex = -1;
+
+            function selectItem(item) {
+                if (!item) return;
+                items.forEach(i => i.classList.remove('selected', 'highlight'));
+                item.classList.add('selected');
+                searchInput.value = item.dataset[dataAttribute];
+                optionsContainer.classList.add('hidden');
+                if (onSelectCallback) onSelectCallback(item);
+                validateForm();
+            }
+
+            function updateHighlight() {
+                const visibleItems = items.filter(item => !item.classList.contains('hidden'));
+                visibleItems.forEach((item, index) => {
+                    item.classList.toggle('highlight', index === highlightedIndex);
+                    if (index === highlightedIndex) item.scrollIntoView({ block: 'nearest' });
+                });
+            }
+
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                highlightedIndex = -1;
+                optionsContainer.classList.toggle('hidden', searchTerm.length === 0);
+                let matchesFound = 0;
+                items.forEach(item => {
+                    if (item.classList.contains('other-option')) return;
+                    const itemName = item.dataset[dataAttribute].toLowerCase();
+                    const isMatch = itemName.includes(searchTerm);
+                    item.classList.toggle('hidden', !isMatch); 
+                    if (isMatch) matchesFound++;
+                });
+                if (otherOption) {
+                    const noMatches = matchesFound === 0 && searchTerm.length > 0;
+                    otherOption.classList.toggle('hidden', !noMatches);
+                }
+                updateHighlight();
+            });
+            
+            searchInput.addEventListener('keydown', (e) => {
+                const visibleItems = items.filter(item => !item.classList.contains('hidden'));
+                if (visibleItems.length === 0) return;
+                if (e.key === 'ArrowDown') { e.preventDefault(); highlightedIndex = (highlightedIndex + 1) % visibleItems.length; }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); highlightedIndex = (highlightedIndex - 1 + visibleItems.length) % visibleItems.length; }
+                else if (e.key === 'Enter') { e.preventDefault(); if (highlightedIndex > -1) selectItem(visibleItems[highlightedIndex]); }
+                updateHighlight();
+            });
+
+            optionsContainer.addEventListener('click', (e) => selectItem(e.target.closest(`.${itemClassName}`)));
+            document.addEventListener('click', (e) => { if (!searchInput.contains(e.target) && !optionsContainer.contains(e.target)) optionsContainer.classList.add('hidden'); });
+        }
+
+        // --- Setup Selectors ---
+        const locationDetailsContainer = document.getElementById('location-details-container');
+        setupSearchableSelect('water-item-search', 'water-item-options', 'search-item', 'itemName');
+        setupSearchableSelect('building-search', 'building-options', 'search-item', 'buildingName', (selectedItem) => {
+            if (selectedItem) { showElement(locationDetailsContainer); }
+        });
+
+        // --- Form Validation ---
+        const waterItemSearch = document.getElementById('water-item-search');
+        const buildingSearch = document.getElementById('building-search');
+        const floorInput = document.getElementById('floor-input');
+        const roomInput = document.getElementById('room-input');
+        const detailsInput = document.getElementById('details-input');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        const requiredInputs = [waterItemSearch, buildingSearch, floorInput, roomInput];
+        function validateForm() {
+            const allValid = requiredInputs.every(input => input.value.trim() !== '');
+            submitBtn.disabled = !allValid;
+        }
+        requiredInputs.forEach(input => input.addEventListener('input', validateForm));
+        
+        // --- Image Upload ---
+        const fileUpload = document.getElementById('file-upload');
+        const imagePrompt = document.getElementById('image-prompt');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const removeImageBtn = document.getElementById('remove-image-btn');
+
+        fileUpload.addEventListener('change', () => {
+            const file = fileUpload.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => { imagePreview.src = e.target.result; imagePrompt.classList.add('hidden'); imagePreviewContainer.classList.remove('hidden'); };
+                reader.readAsDataURL(file);
+            }
+        });
+        removeImageBtn.addEventListener('click', () => {
+            fileUpload.value = ''; imagePreview.src = ''; imagePreviewContainer.classList.add('hidden'); imagePrompt.classList.remove('hidden');
+        });
+
+        // --- SUBMIT LOGIC (UPDATED) ---
+        const formContainer = document.getElementById('form-container');
+        const successContainer = document.getElementById('success-container');
+        const waterForm = document.getElementById('water-form');
+        
+        submitBtn.addEventListener('click', async () => {
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+
+            const formData = new FormData();
+            formData.append('service_type', 'Water');
+            formData.append('building', buildingSearch.value);
+            formData.append('floor', floorInput.value);
+            formData.append('room', roomInput.value);
+            
+            const descText = `Issue: ${waterItemSearch.value}. Details: ${detailsInput.value}`;
+            formData.append('description', descText);
+
+            if (fileUpload.files[0]) {
+                formData.append('image', fileUpload.files[0]);
+            }
+
+            try {
+                const response = await fetch('/api/requests', { method: 'POST', body: formData });
+
+                if (response.ok) {
+                    // Success UI
+                    document.getElementById('success-item').textContent = waterItemSearch.value;
+                    document.getElementById('success-address').textContent = `${buildingSearch.value}, Floor ${floorInput.value}, ${roomInput.value}`;
+                    document.getElementById('success-date').textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+                    const successImageContainer = document.getElementById('success-image-container');
+                    if (imagePreview.src && !imagePreviewContainer.classList.contains('hidden')) {
+                        document.getElementById('success-image').src = imagePreview.src;
+                        successImageContainer.classList.remove('hidden');
+                    } else {
+                        successImageContainer.classList.add('hidden');
+                    }
+                    
+                    hideElement(formContainer, () => { showElement(successContainer); });
+                } else {
+                    alert("Failed to submit request.");
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Server Error");
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        document.getElementById('back-to-home-btn').addEventListener('click', () => {
+            hideElement(successContainer, () => {
+                waterForm.reset();
+                removeImageBtn.click();
+                document.querySelectorAll('.search-item.selected').forEach(el => el.classList.remove('selected'));
+                locationDetailsContainer.classList.add('opacity-0');
+                locationDetailsContainer.classList.add('hidden');
+                submitBtn.innerHTML = 'Submit Request';
+                validateForm();
+                showElement(formContainer);
+            });
+        });
+
+        function logout() { fetch('/api/logout', {method:'POST'}).then(() => window.location.href='index.html'); }
+
+    </script>
+</body>
+</html>
